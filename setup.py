@@ -60,11 +60,13 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
 # CLP
 if os.environ.get('OPTALG_CLP') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._clp.cclp',
+                                        language='c++',
                                         sources=['./optalg/opt_solver/_clp/cclp.pyx'],
-                                        libraries=['Clp'],
+                                        libraries=['Clp', 'CoinUtils', 'Osi', 'OsiClp', 'OsiCommonTests'],
                                         include_dirs=[np.get_include(),'./lib/clp/include'],
                                         library_dirs=['./lib/clp/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=['-D_GLIBCXX_USE_CXX11_ABI=0'],
+                                        extra_compile_args=['-D_GLIBCXX_USE_CXX11_ABI=0'])])
 
 # CBC
 if os.environ.get('OPTALG_CBC') == 'true':
