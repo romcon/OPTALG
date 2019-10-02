@@ -5,6 +5,7 @@ include LICENSE.md
 recursive-include docs *
 recursive-include examples *
 recursive-include tests *
+global-include *LICENSE*
 global-include README.md
 global-include COPYING
 global-include *.pxd
