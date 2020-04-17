@@ -3,6 +3,7 @@ del /s /f %~dp0*.pyc
 del /s /f %~dp0*.dll
 del /s /f %~dp0*.lib
 del /s /f %~dp0*.a
+del /s /f %~dp0*.c
 rmdir /s /q %~dp0build
 rmdir /s /q %~dp0dist
 rmdir /s /q %~dp0OPTALG.egg-info
