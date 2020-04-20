@@ -1,5 +1,6 @@
 """
 - Changed "long" to "unsigned long" (Tomas Tinoco De Rubira, 01/11/2014)
+- Changed "unsigned long" to "uintptr_t" (Tamer Ibrahim, 04/19/2020)
 - Separated variable definitions into multipler lines (Tomas Tinoco De Rubira, 06/02/2017)
 """
 
@@ -15,6 +16,7 @@ DMUMPS_COMPLEX_DTYPE = 'd'
 
 from libc.string cimport strncpy
 from libc.stdint cimport uintptr_t
+
 cdef extern from "dmumps_c.h":
 
     ctypedef int MUMPS_INT
