@@ -14,7 +14,7 @@ DMUMPS_REAL_DTYPE = 'd'
 DMUMPS_COMPLEX_DTYPE = 'd'
 
 from libc.string cimport strncpy
-
+from libc.stdint cimport uintptr_t
 cdef extern from "dmumps_c.h":
 
     ctypedef int MUMPS_INT
