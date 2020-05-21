@@ -1,10 +1,10 @@
-#****************************************************#
+# ****************************************************#
 # This file is part of OPTALG.                       #
 #                                                    #
 # Copyright (c) 2019, Tomas Tinoco De Rubira.        #
 #                                                    #
 # OPTALG is released under the BSD 2-clause license. #
-#****************************************************#
+# ****************************************************#
 
 import os
 import sys
@@ -12,6 +12,12 @@ import numpy as np
 from subprocess import call
 from Cython.Build import cythonize
 from setuptools import setup, Extension
+import py_compile
+from distutils import log
+from setuptools.command.build_py import build_py
+from setuptools.command.bdist_egg import bdist_egg
+from wheel.bdist_wheel import bdist_wheel
+
 
 # External libraries
 if 'darwin' in sys.platform.lower() or 'linux' in sys.platform.lower():
@@ -34,7 +40,7 @@ else:
     libraries_mumps = ['IpOptFSS']
     libraries_ipopt = ['IpOpt-vc10']
     extra_link_args = ['']
-    
+
 # Extension modules
 ext_modules = []
 
@@ -48,7 +54,7 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
                                         include_dirs=['./lib/ipopt/include/coin/ThirdParty'],
                                         library_dirs=['./lib/ipopt/lib'],
                                         extra_link_args=extra_link_args)])
-    
+
     # IPOPT
     ext_modules += cythonize([Extension(name='optalg.opt_solver._ipopt.cipopt',
                                         sources=['./optalg/opt_solver/_ipopt/cipopt.pyx'],
@@ -56,7 +62,7 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
                                         include_dirs=[np.get_include(),'./lib/ipopt/include'],
                                         library_dirs=['./lib/ipopt/lib'],
                                         extra_link_args=extra_link_args)])
-    
+
 # CLP
 if os.environ.get('OPTALG_CLP') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._clp.cclp',
@@ -75,8 +81,46 @@ if os.environ.get('OPTALG_CBC') == 'true':
                                         library_dirs=['./lib/cbc/lib'],
                                         extra_link_args=extra_link_args)])
 
-exec(open(os.path.join('optalg', 'version.py')).read())    
- 
+exec(open(os.path.join('optalg', 'version.py')).read())
+
+
+# Custom distribution build commands
+class bdist_wheel_compiled(bdist_wheel):
+    """Small customizations to build compiled only wheel."""
+    description = 'build compiled wheel distribution'
+
+
+class bdist_egg_compiled(bdist_egg):
+    """Small customizations to build compiled only egg."""
+    description = 'build compiled egg distribution'
+
+
+if len(sys.argv) > 1 and 'compiled' in sys.argv[1]:
+
+    class build_py(build_py):
+        """
+        A custom build_py command to exclude source files from packaging and
+        include compiled pyc files instead.
+        """
+        def byte_compile(self, files):
+            for file in files:
+                full_path = os.path.abspath(file)
+                if file.endswith('.py'):
+                    log.info("{}  compiling and unlinking".format(file))
+                    py_compile.compile(file, cfile=file+'c')
+                    os.unlink(file)
+                elif file.endswith('pyx') or file.endswith('pxd'):
+                    log.info("{}  unlinking".format(file))
+                    os.unlink(file)
+
+    extra_cmd_classes = {'bdist_wheel_compiled': bdist_wheel_compiled,
+                         'bdist_egg_compiled': bdist_egg_compiled,
+                         'build_py': build_py}
+
+else:
+    extra_cmd_classes = {'bdist_wheel_compiled': bdist_wheel_compiled,
+                         'bdist_egg_compiled': bdist_egg_compiled}
+
 setup(name='OPTALG',
       zip_safe=False,
       version=__version__,
@@ -85,6 +129,7 @@ setup(name='OPTALG',
       author='Tomas Tinoco De Rubira',
       author_email='ttinoco5687@gmail.com',
       include_package_data=True,
+      cmdclass=extra_cmd_classes,
       license='BSD 2-Clause License',
       packages=['optalg',
                 'optalg.lin_solver',
@@ -106,5 +151,3 @@ setup(name='OPTALG',
                    'Programming Language :: Python :: 2.7',
                    'Programming Language :: Python :: 3.5'],
       ext_modules=ext_modules)
-      
-
