@@ -5,7 +5,7 @@ matrix:
     - os: linux
       python: 2.7
     - os: linux
-      python: 3.5
+      python: 3.7
     - os: osx
       osx_image: xcode7.3
       language: generic
@@ -16,6 +16,6 @@ install:
     fi
   - pip install -r requirements.txt
 
-script: 
+script:
   - python setup.py build_ext --inplace
   - nosetests -s -v

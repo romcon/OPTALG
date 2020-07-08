@@ -10,11 +10,12 @@ import numpy as np
 from .problem import OptProblem
 from scipy.sparse import coo_matrix
 
+
 class LinProblem(OptProblem):
     """
     Linear problem class.
     It represents problem of the form
-    
+
     minimize    c^Tx
     subject to  Ax = b
                 l <= x <= u
@@ -23,7 +24,7 @@ class LinProblem(OptProblem):
     def __init__(self, c, A, b, l, u, x=None, lam=None, mu=None, pi=None):
         """
         Linear program class.
-        
+
         Parameters
         ----------
         c : vector
@@ -52,7 +53,7 @@ class LinProblem(OptProblem):
         self.gphi = self.c
 
         self.x = x if x is not None else np.zeros(self.n)
-        
+
         self.lam = lam
         self.mu = mu
         self.pi = pi
@@ -71,13 +72,13 @@ class LinProblem(OptProblem):
             assert(mu.size == u.size)
         if pi is not None:
             assert(pi.size == u.size)
- 
+
     def eval(self,x):
 
         self.phi = np.dot(self.c,x)
-        
+
     def show(self):
-        
+
         print('\nLP Problem')
         print('----------')
         print('A shape : (%d,%d)' %(self.A.shape[0],self.A.shape[1]))

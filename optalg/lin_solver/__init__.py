@@ -11,6 +11,7 @@ from .mumps import LinSolverMUMPS
 from .superlu import LinSolverSUPERLU
 from .umfpack import LinSolverUMFPACK
 
+
 def new_linsolver(name='default', prop='unsymmetric'):
     """
     Creates a linear solver.
@@ -19,12 +20,12 @@ def new_linsolver(name='default', prop='unsymmetric'):
     ----------
     name : string
     prop : string
-    
+
     Returns
     -------
     solver : :class:`LinSolver <optalg.lin_solver.LinSolver>`
     """
-    
+
     if name == 'mumps':
         return LinSolverMUMPS(prop)
     elif name == 'superlu':
@@ -35,6 +36,6 @@ def new_linsolver(name='default', prop='unsymmetric'):
         try:
             return new_linsolver('mumps',prop)
         except ImportError:
-            return new_linsolver('superlu',prop)            
+            return new_linsolver('superlu',prop)
     else:
         raise ValueError('invalid linear solver name')

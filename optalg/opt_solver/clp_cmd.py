@@ -16,6 +16,7 @@ from .opt_solver_error import *
 from .opt_solver import OptSolver
 from .problem import OptProblem
 
+
 class OptSolverClpCMD(OptSolver):
 
     parameters = {'quiet' : False, 'debug': False}
@@ -28,7 +29,7 @@ class OptSolverClpCMD(OptSolver):
         # Check
         if not utils.cmd_exists('clp'):
             raise ImportError('clp cmd not available')
-        
+
         OptSolver.__init__(self)
         self.parameters = OptSolverClpCMD.parameters.copy()
 
@@ -45,11 +46,11 @@ class OptSolverClpCMD(OptSolver):
     def read_solution(self, filename, problem):
 
         f = open(filename, 'r')
-        
+
         l = f.readline().split()
         status = l[0]
         f.readline()
-        
+
         x = np.zeros(problem.c.size)
         lam = np.zeros(problem.A.shape[0])
         nu = np.zeros(0)
@@ -70,7 +71,7 @@ class OptSolverClpCMD(OptSolver):
                 lam[i] = float(l[3])
         f.close()
         return status, x, lam, nu, mu, pi
-        
+
     def solve(self, problem):
 
         # Local vars
@@ -121,5 +122,3 @@ class OptSolverClpCMD(OptSolver):
             self.set_error_msg('')
         else:
             raise OptSolverError_ClpCMD(self)
-
-        

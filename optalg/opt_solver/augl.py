@@ -15,8 +15,9 @@ from .opt_solver import OptSolver
 from optalg.lin_solver import new_linsolver
 from scipy.sparse import bmat,eye,coo_matrix,tril
 
+
 class OptSolverAugL(OptSolver):
-    
+
     parameters = {'beta_large' : 0.9,       # for decreasing sigma when progress
                   'beta_med' : 0.5,         # for decreasing sigma when forcing
                   'beta_small' : 0.1,       # for decreasing sigma
@@ -36,15 +37,15 @@ class OptSolverAugL(OptSolver):
                   'subprob_maxiter' : 150,  # maximum subproblem iterations
                   'linsolver' : 'default',  # linear solver
                   'quiet' : False}          # flag for omitting output
-    
+
     def __init__(self):
         """
         Augmented Lagrangian algorithm.
         """
-        
+
         OptSolver.__init__(self)
         self.parameters = OptSolverAugL.parameters.copy()
-        self.linsolver1 = None 
+        self.linsolver1 = None
         self.linsolver2 = None
         self.barrier = None
 
@@ -61,12 +62,12 @@ class OptSolverAugL(OptSolver):
         return True
 
     def solve(self, problem):
-        
+
         # Local vars
         norm2 = self.norm2
         norminf = self.norminf
         params = self.parameters
-        
+
         # Parameters
         tau = params['tau']
         gamma = params['gamma']
@@ -90,13 +91,13 @@ class OptSolverAugL(OptSolver):
 
         # Reset
         self.reset()
-        
+
         # Barrier
         self.barrier = AugLBarrier(problem.get_num_primal_variables(),
                                    problem.l,
                                    problem.u,
                                    eps=feastol/10.)
-        
+
         # Init primal
         if problem.x is not None:
             self.x = self.barrier.to_interior(problem.x.copy(),
@@ -122,14 +123,14 @@ class OptSolverAugL(OptSolver):
                 self.pi = np.zeros(self.x.size)
         except AttributeError:
             self.pi = np.zeros(self.x.size)
-        try: 
+        try:
             if problem.mu is not None:
                 self.mu = problem.mu.copy()
             else:
                 self.mu = np.zeros(self.x.size)
         except AttributeError:
             self.mu = np.zeros(self.x.size)
-        
+
         # Constants
         self.sigma = 0.
         self.theta = 0.
@@ -143,12 +144,12 @@ class OptSolverAugL(OptSolver):
         self.Ixx = eye(self.nx,format='coo')
         self.Iff = eye(self.nf,format='coo')
         self.Iaa = eye(self.na,format='coo')
-        
+
         # Objective scaling
         fdata = self.func(self.x)
         self.obj_sca = np.maximum(np.abs(fdata.phi)/100.,1.)
         fdata = self.func(self.x)
-        
+
         # Init penalty and barrier parameters
         self.sigma = kappa*norm2(fdata.GradF)/np.maximum(norm2(fdata.gphi),1.)
         self.sigma = np.minimum(np.maximum(self.sigma,sigma_init_min),sigma_init_max)
@@ -159,30 +160,30 @@ class OptSolverAugL(OptSolver):
         # Init residuals
         pres_prev = norminf(fdata.pres)
         gLmax_prev = norminf(fdata.GradF)
-        
+
         # Init dual update
         if pres_prev <= feastol:
             self.update_multiplier_estimates()
             fdata = self.func(self.x)
-            
+
         # Outer iterations
         self.k = 0
         self.useH = False
         self.code = list('----')
         while True:
-            
+
             # Solve subproblem
             self.solve_subproblem(tau*gLmax_prev)
 
             # Check done
             if self.is_status_solved():
                 return
-                
+
             # Measure progress
             pres = norminf(fdata.pres)
             dres = norminf(fdata.dres)
             gLmax = norminf(fdata.GradF)
-            
+
             # Penaly update
             if pres <= np.maximum(gamma*pres_prev,feastol):
                 self.sigma *= beta_large
@@ -205,14 +206,14 @@ class OptSolverAugL(OptSolver):
             self.k += 1
 
     def solve_subproblem(self,delta):
-        
+
         # Local vars
         norm2 = self.norm2
         norminf = self.norminf
         params = self.parameters
         problem = self.problem
         barrier = self.barrier
-        
+
         # Params
         quiet = params['quiet']
         maxiter = params['maxiter']
@@ -226,25 +227,25 @@ class OptSolverAugL(OptSolver):
         beta_small = params['beta_small']
         subprob_force = params['subprob_force']
         subprob_maxiter = params['subprob_maxiter']
-        
+
         # Print header
         self.print_header()
 
         # Init eval
         fdata = self.func(self.x)
-        
+
         # Inner iterations
         i = 0
         j = 0
         alpha = 0.
         while True:
-            
+
             # Compute info
             pres = norminf(fdata.pres)
             dres = norminf(fdata.dres)
             dmax = max(map(norminf,[self.lam,self.nu,self.mu,self.pi]))
             gLmax = norminf(fdata.GradF)
-            
+
             # Show info
             if not quiet:
                 print('{0:^4d}'.format(self.k),end=' ')
@@ -274,11 +275,11 @@ class OptSolverAugL(OptSolver):
             # Check only theta missing
             if pres <= feastol and dres <= optol:
                 return
-                
+
             # Check subproblem solved
             if gLmax <= delta:
                 return
-                
+
             # Check total maxiters
             if self.k >= maxiter:
                 raise OptSolverError_MaxIters(self)
@@ -286,34 +287,34 @@ class OptSolverAugL(OptSolver):
             # Check penalty
             if self.sigma < sigma_min:
                 raise OptSolverError_SmallPenalty(self)
-                
+
             # Check custom terminations
             for t in self.terminations:
                 t(self)
-                
+
             # Search direction
             p = self.compute_search_direction(self.useH)
 
             # Max steplength
             ppos = p > 1e-15
-            pneg = p < -1e-15            
+            pneg = p < -1e-15
             a1 = np.min(((barrier.umax-self.x)[ppos])/(p[ppos])) if ppos.sum() else np.inf
             a2 = np.min(((barrier.umin-self.x)[pneg])/(p[pneg])) if pneg.sum() else np.inf
             alpha_max = 0.98*min([a1,a2])
             if not alpha_max:
                 raise OptSolverError_NumProblems(self)
-            
+
             try:
 
                 # Line search
                 alpha,fdata = self.line_search(self.x,p,fdata.F,fdata.GradF,self.func,alpha_max)
-                
+
                 # Update x
                 self.x += alpha*p
 
             except OptSolverError_LineSearch:
 
-                # Update 
+                # Update
                 self.sigma *= beta_large
                 fdata = self.func(self.x)
                 self.code[3] = 'b'
@@ -326,7 +327,7 @@ class OptSolverAugL(OptSolver):
             self.k += 1
             i += 1
             j += 1
-            
+
             # Periodic force
             if i >= subprob_force:
                 self.sigma *= beta_large
@@ -341,14 +342,14 @@ class OptSolverAugL(OptSolver):
                 self.update_multiplier_estimates()
                 fdata = self.func(self.x)
                 self.code[2] = 'm'
-                j = 0 
+                j = 0
 
     def compute_search_direction(self,useH):
-        
+
         fdata = self.fdata
         problem = self.problem
         barrier = self.barrier
-        
+
         sigma = self.sigma
         theta = self.theta
 
@@ -380,14 +381,14 @@ class OptSolverAugL(OptSolver):
             return self.linsolver1.factorize_and_solve(W,b)[:self.x.size]
         except Exception:
             return np.zeros(self.x.size)
-        
+
     def func(self,x):
-        
+
         # Norm
         norm = self.norminf
 
         # Multipliers
-        lam = self.lam    
+        lam = self.lam
         nu = self.nu
 
         # Penalty
@@ -402,7 +403,7 @@ class OptSolverAugL(OptSolver):
         # Eval
         p.eval(x)
         barrier.eval(x)
-        
+
         # Problem data
         phi = p.phi/self.obj_sca
         gphi = p.gphi/self.obj_sca
@@ -411,39 +412,39 @@ class OptSolverAugL(OptSolver):
         J = p.J
         A = p.A
         r = A*x-p.b
-           
+
         # Barrier data
         phiB = barrier.phi
         gphiB = barrier.gphi
         HphiB = barrier.Hphi
- 
+
         # Intermediate
         nuTf = np.dot(nu,f)
         y = (sigma*nu-f)
         JT = J.T
         JTnu = JT*nu
         JTy = JT*y
-        
+
         # Intermediate
         lamTr = np.dot(lam,r)
         z = (sigma*lam-r)
         AT = A.T
         ATlam = AT*lam
         ATz = AT*z
-        
+
         pres = np.hstack((r,f))
         dres = gphi+theta*gphiB-ATlam-JTnu
         dres_den = 1.+norm(gphi)+theta*norm(gphiB)+norm(A.data)*norm(lam)+norm(J.data)*norm(nu)
-               
+
         fdata.ATlam = ATlam
         fdata.JTnu = JTnu
- 
+
         fdata.r = r
         fdata.f = f
-        
+
         fdata.F = sigma*phi + sigma*theta*phiB - sigma*(nuTf+lamTr) + 0.5*np.dot(pres,pres)
         fdata.GradF = sigma*gphi + sigma*theta*gphiB - JTy - ATz
-        
+
         fdata.pres = pres
         fdata.dres = dres/dres_den
 
@@ -454,11 +455,11 @@ class OptSolverAugL(OptSolver):
         fdata.phiB = phiB
         fdata.gphiB = gphiB
         fdata.HphiB = HphiB
-        
+
         return fdata
 
     def print_header(self):
-        
+
         # Local vars
         params = self.parameters
         quiet = params['quiet']
@@ -483,7 +484,7 @@ class OptSolverAugL(OptSolver):
                     print('')
             else:
                 print('')
-                
+
     def update_multiplier_estimates(self):
 
         # Local variables
@@ -491,7 +492,7 @@ class OptSolverAugL(OptSolver):
         problem = self.problem
         barrier = self.barrier
         fdata = self.fdata
-        
+
         # Parameters
         lam_reg = params['lam_reg']
         sigma = self.sigma
@@ -519,12 +520,12 @@ class OptSolverAugL(OptSolver):
                        self.ox))
 
         if W.size:
-            
+
             if not self.linsolver2.is_analyzed():
                 self.linsolver2.analyze(W)
 
             sol = self.linsolver2.factorize_and_solve(W,b)
-        
+
             self.lam += sol[:self.na]
             self.nu += sol[self.na:self.na+self.nf]
             self.mu = theta/(barrier.umax-self.x)
@@ -536,7 +537,7 @@ class AugLBarrier:
     """
 
     def __init__(self, n, umin=None, umax=None, eps=1e-5, inf=1e8):
-        
+
         assert(n >= 0)
         assert(inf > 0)
 
@@ -554,7 +555,7 @@ class AugLBarrier:
         assert(umin.size == n)
         assert(umin.size == umax.size)
         assert(np.all(umin < umax))
-        
+
         self.n = n
         self.inf = inf
         self.umin = umin
@@ -579,5 +580,5 @@ class AugLBarrier:
         self.Hphi_data[:] = 1./np.square(dumin)+1./np.square(dumax)
 
     def to_interior(self,x, eps=1e-5):
-        
+
         return np.maximum(np.minimum(x, self.umax-eps), self.umin+eps)

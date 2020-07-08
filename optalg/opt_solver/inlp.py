@@ -14,17 +14,18 @@ from .problem import cast_problem, OptProblem
 from optalg.lin_solver import new_linsolver
 from scipy.sparse import bmat, triu, eye, spdiags, coo_matrix
 
+
 class OptSolverINLP(OptSolver):
     """
     Interior-point non-linear programming solver.
     """
-    
+
     # Solver parameters
     parameters = {'feastol': 1e-4,          # Feasibility tolerance
                   'optol': 1e-4,            # Optimality tolerance
                   'maxiter': 300,           # Max iterations
                   'sigma': 0.1,             # Factor for increasing subproblem solution accuracy
-                  'eps': 1e-4,              # Boundary proximity factor 
+                  'eps': 1e-4,              # Boundary proximity factor
                   'linsolver': 'default',   # Linear solver
                   'line_search_maxiter': 0, # maxiter for linesearch
                   'quiet': False}           # Quiet flag
@@ -33,7 +34,7 @@ class OptSolverINLP(OptSolver):
         """
         Interior-point non-linear programming solver.
         """
-        
+
         # Init
         OptSolver.__init__(self)
         self.parameters = OptSolverINLP.parameters.copy()
@@ -54,17 +55,17 @@ class OptSolverINLP(OptSolver):
     def solve(self, problem):
         """
         Solves optimization problem.
-        
+
         Parameters
         ----------
         problem : Object
         """
-    
+
         # Local vars
         norm2 = self.norm2
         norminf = self.norminf
         parameters = self.parameters
-        
+
         # Parameters
         feastol = parameters['feastol']
         optol = parameters['optol']
@@ -77,7 +78,7 @@ class OptSolverINLP(OptSolver):
         # Problem
         problem = cast_problem(problem)
         self.problem = problem
-        
+
         # Linsolver
         self.linsolver = new_linsolver(parameters['linsolver'],'symmetric')
 
@@ -136,7 +137,7 @@ class OptSolverINLP(OptSolver):
         if not quiet:
             print('\nSolver: inlp')
             print('------------')
-                                   
+
         # Outer
         s = 0.
         self.k = 0
@@ -145,13 +146,13 @@ class OptSolverINLP(OptSolver):
             # Average violation of complementarity slackness
             self.eta_mu = (np.dot(self.mu,self.u-self.x)/self.x.size) if self.x.size else 0.
             self.eta_pi = (np.dot(self.pi,self.x-self.l)/self.x.size) if self.x.size else 0.
-            
+
             # Init eval
             fdata = self.func(self.y)
 
             # Target
             tau = sigma*norminf(fdata.GradF)
-           
+
             # Header
             if not quiet:
                 if self.k > 0:
@@ -164,19 +165,19 @@ class OptSolverINLP(OptSolver):
                 print('{0:^8s}'.format('cu'),end=' ')
                 print('{0:^8s}'.format('cl'),end=' ')
                 print('{0:^8s}'.format('alpha'))
- 
+
             # Inner
             while True:
-                
+
                 # Eval
                 fdata = self.func(self.y)
                 pres = norminf(np.hstack((fdata.rp1,fdata.rp2)))
                 dres = norminf(np.hstack((fdata.rd,fdata.ru,fdata.rl)))
-                gmax = norminf(fdata.GradF)                
+                gmax = norminf(fdata.GradF)
                 compu = norminf(self.mu*(self.u-self.x))
                 compl = norminf(self.pi*(self.x-self.l))
                 phi = problem.phi
-                
+
                 # Show progress
                 if not quiet:
                     print('{0:^3d}'.format(self.k),end=' ')
@@ -193,19 +194,19 @@ class OptSolverINLP(OptSolver):
                     self.set_status(self.STATUS_SOLVED)
                     self.set_error_msg('')
                     return
-                    
+
                 # Done
-                if gmax < tau: 
+                if gmax < tau:
                     break
 
-                # Done 
+                # Done
                 if pres < feastol and dres < optol and np.maximum(compu,compl) < optol:
                     break
 
                 # Maxiters
                 if self.k >= maxiter:
                     raise OptSolverError_MaxIters(self)
-                
+
                 # Search direction
                 ux = self.u-self.x
                 xl = self.x-self.l
@@ -251,7 +252,7 @@ class OptSolverINLP(OptSolver):
                 smax = (1.-eps)*np.min([s1,s2,s3,s4])
                 spmax = (1.-eps)*np.min([s1,s2])
                 sdmax = (1.-eps)*np.min([s3,s4])
-                
+
                 # Line search
                 try:
                     s, fdata = self.line_search(self.y, p, fdata.F, fdata.GradF, self.func, smax=smax, maxiter=ls_maxiter)
@@ -259,7 +260,7 @@ class OptSolverINLP(OptSolver):
                     # Update point
                     self.y += s*p
                     self.x, self.lam, self.nu, self.mu, self.pi = self.extract_components(self.y)
-                    
+
                 except OptSolverError_LineSearch:
                     sp = np.minimum(1., spmax)
                     sd = np.minimum(1., sdmax)
@@ -274,7 +275,7 @@ class OptSolverINLP(OptSolver):
                     self.y = np.hstack((self.x,self.lam,self.nu,self.mu,self.pi))
 
                 # Update iters
-                self.k += 1                
+                self.k += 1
 
                 # Check
                 try:
@@ -287,13 +288,13 @@ class OptSolverINLP(OptSolver):
 
             # Update iters
             self.k += 1
-                
+
     def extract_components(self,y):
 
         n = self.n
         m1 = self.m1
         m2 = self.m2
-        
+
         x = y[:n]
         lam = y[n:n+m1]
         nu = y[n+m1:n+m1+m2]
@@ -301,9 +302,9 @@ class OptSolverINLP(OptSolver):
         pi = y[2*n+m1+m2:]
 
         return x,lam,nu,mu,pi
-        
+
     def func(self,y):
-        
+
         fdata = self.fdata
         sigma = self.parameters['sigma']
         prob = self.problem
@@ -314,18 +315,18 @@ class OptSolverINLP(OptSolver):
         # Eval
         prob.eval(x)
         prob.combine_H(-nu)
-        
+
         ux = self.u-x
         xl = x-self.l
 
         JT = prob.J.T
-        
+
         rd = prob.gphi/obj_sca-self.AT*lam-JT*nu+mu-pi # dual residual
         rp1 = self.A*x-self.b                          # primal residual 1
         rp2 = prob.f                                   # primal residual 2
         ru = mu*ux-sigma*self.eta_mu*self.e            # residual of perturbed complementarity
         rl = pi*xl-sigma*self.eta_pi*self.e            # residual of perturbed complementarity
-        
+
         Dmu = spdiags(self.mu,0,self.n,self.n)
         Dux = spdiags(ux,0,self.n,self.n)
         Dpi = spdiags(self.pi,0,self.n,self.n)

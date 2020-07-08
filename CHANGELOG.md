@@ -1,5 +1,5 @@
-Unreleased
-----------
+Version 1.1.9
+-------------
 * Simplified barrier parameters in augl.
 * Added problem properties and methods for checking whether solvers support certain problem properties.
 * Added methods to convert general problem into linear, mixed integer linear, and quadratic problems.
@@ -9,6 +9,7 @@ Unreleased
 * Added acceleration factor to nr.
 * Added recovery strategy for augl linear system factorization error.
 * Lagrange multiplier extraction from cbc/clp/cplex solutions.
+* Bug fix for MUMPS wrapper by using pointer lengths being platform dependent with `uintptr_t` (from stdint) instead of `unsigned long`.
 
 Version 1.1.7
 -------------

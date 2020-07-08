@@ -12,6 +12,7 @@ from .opt_solver_error import *
 from .opt_solver import OptSolver
 from .problem import OptProblem
 
+
 class OptSolverCbc(OptSolver):
 
     parameters = {'quiet' : False}
@@ -23,7 +24,7 @@ class OptSolverCbc(OptSolver):
 
         # Import
         from ._cbc import CbcContext
-        
+
         OptSolver.__init__(self)
         self.parameters = OptSolverCbc.parameters.copy()
 
@@ -37,7 +38,7 @@ class OptSolverCbc(OptSolver):
                          OptProblem.PROP_TYPE_OPTIMIZATION]:
                 return False
         return True
-        
+
     def solve(self, problem):
 
         # Import
@@ -65,7 +66,7 @@ class OptSolverCbc(OptSolver):
                                      self.problem.b,
                                      self.problem.b)
         self.cbc_context.setInteger(self.problem.P)
-        
+
         # Reset
         self.reset()
 
@@ -75,7 +76,7 @@ class OptSolverCbc(OptSolver):
 
         # Solve
         self.cbc_context.solve()
-        
+
         # Save
         self.x = self.cbc_context.getColSolution()
         if self.cbc_context.status() == 0:

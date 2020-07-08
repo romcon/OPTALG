@@ -14,8 +14,9 @@ from .opt_solver import OptSolver
 from scipy.sparse import bmat
 from optalg.lin_solver import new_linsolver
 
+
 class OptSolverNR(OptSolver):
-    
+
     parameters = {'feastol':1e-4,
                   'acc_factor': 1.,
                   'maxiter':100,
@@ -26,10 +27,10 @@ class OptSolverNR(OptSolver):
         """
         Newton-Raphson algorithm.
         """
-        
+
         # Init
         OptSolver.__init__(self)
-        self.parameters = OptSolverNR.parameters.copy()     
+        self.parameters = OptSolverNR.parameters.copy()
         self.linsolver = None
         self.problem = None
 
@@ -43,14 +44,14 @@ class OptSolverNR(OptSolver):
                          OptProblem.PROP_TYPE_FEASIBILITY]:
                 return False
         return True
-        
+
     def func(self, x):
 
         fdata = self.fdata
         p = self.problem
 
         p.eval(x)
-        
+
         J = p.J
         f = p.f
         fTf = np.dot(f,f)
@@ -63,13 +64,13 @@ class OptSolverNR(OptSolver):
 
         fdata.f = f
         fdata.r = r
-        
+
         fdata.F = 0.5*(fTf+rTr)
         fdata.GradF = JTf+ATr
         return fdata
 
     def solve(self, problem):
-    
+
         # Local vars
         norm2 = self.norm2
         norminf = self.norminf
@@ -90,16 +91,16 @@ class OptSolverNR(OptSolver):
 
         # Reset
         self.reset()
-                
+
         # Init point
         if problem.x is not None:
             self.x = problem.x.copy()
         else:
             raise OptSolverError_BadInitPoint(self)
-            
+
         # Init eval
         fdata = self.func(self.x)
-            
+
         # Print header
         if not quiet:
             print('\nSolver: NR')
@@ -115,17 +116,17 @@ class OptSolverNR(OptSolver):
                 print('')
 
         # Main loop
-        s = 0.         
-        pmax = 0.      
+        s = 0.
+        pmax = 0.
         self.k = 0
         analyzed = False
         while True:
-            
+
             # Callbacks
             for c in self.callbacks:
                 c(self)
             fdata = self.func(self.x)
-                        
+
             # Compute info quantities
             fmax = np.maximum(norminf(fdata.f),norminf(fdata.r))
             gmax = norminf(fdata.GradF)
@@ -141,7 +142,7 @@ class OptSolverNR(OptSolver):
                     self.info_printer(self,False)
                 else:
                     print('')
-                
+
             # Check solved
             if fmax < feastol:
                 self.set_status(self.STATUS_SOLVED)
@@ -151,11 +152,11 @@ class OptSolverNR(OptSolver):
             # Check maxiters
             if self.k >= maxiter:
                 raise OptSolverError_MaxIters(self)
-            
+
             # Check custom terminations
             for t in self.terminations:
                 t(self)
-            
+
             # Search direction
             try:
                 if not analyzed:

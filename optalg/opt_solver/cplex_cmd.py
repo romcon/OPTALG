@@ -17,12 +17,13 @@ from .opt_solver import OptSolver
 from .problem import OptProblem
 from multiprocessing import cpu_count
 
+
 class OptSolverCplexCMD(OptSolver):
-    
+
     parameters = {'quiet' : False,
                   'mipgap': None,
                   'feasibility': None,
-                  'debug': False}                  
+                  'debug': False}
 
     def __init__(self):
         """
@@ -32,7 +33,7 @@ class OptSolverCplexCMD(OptSolver):
         # Check
         if not utils.cmd_exists('cplex'):
             raise ImportError('cplex cmd not available')
-        
+
         OptSolver.__init__(self)
         self.parameters = OptSolverCplexCMD.parameters.copy()
 
@@ -81,7 +82,7 @@ class OptSolverCplexCMD(OptSolver):
             dual = c.get('dual')
             if dual is not None:
                 lam[index] = float(dual)
-            
+
         return status, x, lam, nu, mu, pi
 
     def solve(self, problem):
@@ -94,7 +95,7 @@ class OptSolverCplexCMD(OptSolver):
         mipgap = params['mipgap']
         feasibility = params['feasibility']
         debug = params['debug']
-        
+
         # Problem
         try:
             self.problem = problem.to_mixintlin()

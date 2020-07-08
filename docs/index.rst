@@ -6,7 +6,7 @@
 OPTALG Documentation
 ====================
 
-Welcome! This is the documentation for OPTALG version |version|, last updated |today|.
+Welcome! This is the documentation for OPTALG version |release|, last updated |today|.
 
 **What is OPTALG?**
 
@@ -23,7 +23,7 @@ OPTALG is released under the BSD 2-clause license.
 .. toctree::
    :numbered:
    :maxdepth: 3
-	      
+
    Getting Started<start>
    Optimization Solvers<opt_solver>
    API Reference<reference>
@@ -34,4 +34,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

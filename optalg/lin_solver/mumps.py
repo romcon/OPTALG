@@ -9,6 +9,7 @@
 from .lin_solver import LinSolver
 from scipy.sparse import coo_matrix
 
+
 class LinSolverMUMPS(LinSolver):
     """
     Linear solver based on MUMPS.
@@ -21,13 +22,13 @@ class LinSolverMUMPS(LinSolver):
 
         # Import mumps
         from ._mumps import DMumpsContext
-        
+
         # Parent
         LinSolver.__init__(self,prop)
 
         # Name
         self.name ='mumps'
-        
+
         # Load mumps
         if prop == self.UNSYMMETRIC:
             self.mumps = DMumpsContext(par=1,sym=0)
@@ -35,7 +36,7 @@ class LinSolverMUMPS(LinSolver):
             self.mumps = DMumpsContext(par=1,sym=2)
         else:
             raise ValueError('invalid property')
-            
+
         # Configure
         self.mumps.set_silent()
         self.mumps.set_icntl(14, 200) # % increase of estimated working space
@@ -46,19 +47,19 @@ class LinSolverMUMPS(LinSolver):
 
         Parameters
         ----------
-        
-        A : matrix 
+
+        A : matrix
            For symmetric systems, should contain only lower diagonal part.
         """
 
         A = coo_matrix(A)
-        
+
         self.mumps.set_shape(A.shape[0])
         self.mumps.set_centralized_assembled_rows_cols(A.row+1,A.col+1)
         self.mumps.run(job=1)
 
         self.analyzed = True
-        
+
     def factorize(self,A):
         """
         Factorizes A.
@@ -77,11 +78,11 @@ class LinSolverMUMPS(LinSolver):
     def solve(self,b):
         """
         Solves system Ax=b.
-        
+
         Parameters
         ----------
         b : ndarray
-        
+
         Returns
         -------
         x : ndarray

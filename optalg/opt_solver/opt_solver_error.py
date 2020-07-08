@@ -6,50 +6,51 @@
 # OPTALG is released under the BSD 2-clause license. #
 #****************************************************#
 
+
 class OptSolverError(Exception):
-    
+
     def __init__(self, solver, value):
         if solver:
             solver.set_status(solver.STATUS_ERROR)
             solver.set_error_msg(value)
         self.value = value
-        
+
     def __str__(self):
         return str(self.value)
-    
-class OptSolverError_Cbc(OptSolverError):    
+
+class OptSolverError_Cbc(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'cbc solver failed')
 
-class OptSolverError_CbcCMD(OptSolverError):    
+class OptSolverError_CbcCMD(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'cbc command-line solver failed')
 
-class OptSolverError_CbcCMDCall(OptSolverError):    
+class OptSolverError_CbcCMDCall(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'error while calling cbc command-line solver')
-        
-class OptSolverError_Clp(OptSolverError):    
+
+class OptSolverError_Clp(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'clp solver failed')
 
-class OptSolverError_ClpCMD(OptSolverError):    
+class OptSolverError_ClpCMD(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'clp command-line solver failed')
 
-class OptSolverError_ClpCMDCall(OptSolverError):    
+class OptSolverError_ClpCMDCall(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'error while calling clp command-line solver')
 
-class OptSolverError_CplexCMD(OptSolverError):    
+class OptSolverError_CplexCMD(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'cplex command-line solver failed')
 
-class OptSolverError_CplexCMDCall(OptSolverError):    
+class OptSolverError_CplexCMDCall(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'error while calling cplex command-line solver')
 
-class OptSolverError_Ipopt(OptSolverError):    
+class OptSolverError_Ipopt(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'ipopt solver failed')
 
@@ -57,7 +58,7 @@ class OptSolverError_NumProblems(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'numerical problems')
 
-class OptSolverError_LineSearch(OptSolverError):    
+class OptSolverError_LineSearch(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'line search failed')
 
@@ -100,4 +101,3 @@ class OptSolverError_SmallPenalty(OptSolverError):
 class OptSolverError_BadInitPoint(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'bad initial point')
-

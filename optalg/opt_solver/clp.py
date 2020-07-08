@@ -12,6 +12,7 @@ from .opt_solver_error import *
 from .opt_solver import OptSolver
 from .problem import OptProblem
 
+
 class OptSolverClp(OptSolver):
 
     parameters = {'quiet' : False}
@@ -23,10 +24,10 @@ class OptSolverClp(OptSolver):
 
         # Import
         from ._clp import ClpContext
-        
+
         OptSolver.__init__(self)
         self.parameters = OptSolverClp.parameters.copy()
-        
+
     def supports_properties(self, properties):
 
         for p in properties:
@@ -36,7 +37,7 @@ class OptSolverClp(OptSolver):
                          OptProblem.PROP_TYPE_OPTIMIZATION]:
                 return False
         return True
-        
+
     def solve(self, problem):
 
         # Import
@@ -63,7 +64,7 @@ class OptSolverClp(OptSolver):
                                      self.problem.c,
                                      self.problem.b,
                                      self.problem.b)
-        
+
         # Reset
         self.reset()
 
@@ -84,4 +85,3 @@ class OptSolverClp(OptSolver):
             self.set_error_msg('')
         else:
             raise OptSolverError_Clp(self)
-            
