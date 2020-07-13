@@ -58,6 +58,10 @@ class OptSolverError_NumProblems(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'numerical problems')
 
+class OptSolverError_NarrowBounded(OptSolverError):
+    def __init__(self, solver=None, value=None):
+        OptSolverError.__init__(self, solver, 'narrow bounded '+value)
+
 class OptSolverError_LineSearch(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'line search failed')
