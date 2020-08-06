@@ -17,6 +17,7 @@ from distutils import log
 from setuptools.command.build_py import build_py
 from setuptools.command.bdist_egg import bdist_egg
 from wheel.bdist_wheel import bdist_wheel
+from django.templatetags.i18n import language
 
 # External libraries
 if 'darwin' in sys.platform.lower() or 'linux' in sys.platform.lower():
@@ -30,7 +31,7 @@ if return_code != 0:
 if 'darwin' in sys.platform.lower():
     libraries_mumps = ['coinmumps']
     libraries_ipopt = ['ipopt']
-    extra_link_args = ['-Wl,-rpath,@loader_path/']
+    extra_link_args = ['-v','-Wl,-rpath,@loader_path/']
 elif 'linux' in sys.platform.lower():
     libraries_mumps = ['coinmumps']
     libraries_ipopt = ['ipopt']
@@ -50,9 +51,10 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
     ext_modules += cythonize([Extension(name='optalg.lin_solver._mumps._dmumps',
                                         sources=['./optalg/lin_solver/_mumps/_dmumps.pyx'],
                                         libraries=libraries_mumps,
-                                        include_dirs=['./lib/ipopt/include/coin/ThirdParty'],
+                                        include_dirs=['./lib/ipopt/include/coin-or'],
                                         library_dirs=['./lib/ipopt/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
     # IPOPT
     ext_modules += cythonize([Extension(name='optalg.opt_solver._ipopt.cipopt',
@@ -60,7 +62,8 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
                                         libraries=libraries_ipopt,
                                         include_dirs=[np.get_include(),'./lib/ipopt/include'],
                                         library_dirs=['./lib/ipopt/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 # CLP
 if os.environ.get('OPTALG_CLP') == 'true':
@@ -69,7 +72,8 @@ if os.environ.get('OPTALG_CLP') == 'true':
                                         libraries=['Clp'],
                                         include_dirs=[np.get_include(),'./lib/clp/include'],
                                         library_dirs=['./lib/clp/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 # CBC
 if os.environ.get('OPTALG_CBC') == 'true':
@@ -78,7 +82,8 @@ if os.environ.get('OPTALG_CBC') == 'true':
                                         libraries=['CbcSolver'],
                                         include_dirs=[np.get_include(),'./lib/cbc/include'],
                                         library_dirs=['./lib/cbc/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 exec(open(os.path.join('optalg', 'version.py')).read())
 
@@ -130,7 +135,8 @@ setup(name='OPTALG',
       include_package_data=True,
       cmdclass=extra_cmd_classes,
       license='BSD 2-Clause License',
-      packages=['optalg',
+      packages=[
+                'optalg',
                 'optalg.lin_solver',
                 'optalg.lin_solver._mumps',
                 'optalg.opt_solver',
@@ -141,7 +147,8 @@ setup(name='OPTALG',
                         'numpy>=1.11.2',
                         'scipy>=0.18.1',
                         'nose'],
-      package_data={'optalg.lin_solver._mumps' : ['libcoinmumps*', 'IpOptFSS*'],
+      package_data={
+        'optalg.lin_solver._mumps' : ['libcoinmumps*', 'IpOptFSS*'],
                     'optalg.opt_solver._ipopt' : ['libipopt*', 'IpOpt-vc10*', 'IpOptFSS*'],
                     'optalg.opt_solver._clp' : ['libClp*'],
                     'optalg.opt_solver._cbc' : ['libCbc*']},

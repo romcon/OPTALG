@@ -9,7 +9,7 @@
 import numpy as np
 cimport numpy as np
 
-cimport cclp
+from . cimport cclp
 
 np.import_array()
 

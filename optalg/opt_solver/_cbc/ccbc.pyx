@@ -9,7 +9,7 @@
 import numpy as np
 cimport numpy as np
 
-cimport ccbc
+from . cimport ccbc
 
 np.import_array()
 
@@ -105,6 +105,21 @@ cdef class CbcContext:
         value = str(value).encode('UTF-8')
         
         ccbc.Cbc_setParameter(self.model, name, value)
+
+    def setAllowablePercentageGap(self, value):
+
+        if value is not None:
+            ccbc.Cbc_setAllowablePercentageGap(self.model, value)
+            
+    def setPrimalTolerance(self, value):
+        
+        if value is not None:
+            ccbc.Cbc_setPrimalTolerance(self.model, value)
+            
+    def setDualTolerance(self, value):
+        
+        if value is not None:
+            ccbc.Cbc_setDualTolerance(self.model, value)
 
     def isProvenOptimal(self):
 

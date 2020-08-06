@@ -26,6 +26,9 @@ cdef extern from "coin/Cbc_C_Interface.h":
     
     void Cbc_setInteger(Cbc_Model* model, int iColumn)
     void Cbc_setParameter(Cbc_Model* model, char* name, char* value)
+    void Cbc_setAllowablePercentageGap(Cbc_Model* model, double allowedPercentageGap)
+    void Cbc_setPrimalTolerance(Cbc_Model *model, double tol)
+    void Cbc_setDualTolerance(Cbc_Model *model, double tol)
 
     double* Cbc_getColSolution(Cbc_Model* model)
     

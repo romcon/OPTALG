@@ -38,3 +38,5 @@ ccbc.c
 
 # Setup
 setup.cfg
+/.project
+/.pydevproject

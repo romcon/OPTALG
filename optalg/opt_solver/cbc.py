@@ -15,7 +15,27 @@ from .problem import OptProblem
 
 class OptSolverCbc(OptSolver):
 
-    parameters = {'quiet' : False}
+    parameters = {'tol': 1e-7,
+                  'inf': 1e8,
+                  'derivative_test': 'none',
+                  'hessian_approximation': 'exact',
+                  'linear_solver': 'mumps',
+                  'print_level': 5,
+                  'max_iter': 1000,
+                  'mu_init': 1e-1,
+                  'sb': 'yes',
+                  'expect_infeasible_problem': 'no',
+                  'check_derivatives_for_naninf': 'no',
+                  'diverging_iterates_tol': 1e20,
+                  'max_cpu_time': 1e6,
+                  'quiet': False}
+
+    parameters = {'mipgap' : None,
+                  'seconds': None,
+                  'maxnodes': None,
+                  'maxsolutions': None,
+                  'quiet' : False
+                  }
 
     def __init__(self):
         """
@@ -48,6 +68,10 @@ class OptSolverCbc(OptSolver):
         params = self.parameters
 
         # Parameters
+        mipgap = params['mipgap']
+        seconds = params['seconds']
+        maxnodes = params['maxnodes']
+        maxsolutions = params['maxsolutions']
         quiet = params['quiet']
 
         # Problem
@@ -71,6 +95,14 @@ class OptSolverCbc(OptSolver):
         self.reset()
 
         # Options
+        if mipgap is not None:
+            self.cbc_context.setParameter("mipgap", mipgap)
+        if seconds is not None:
+            self.cbc_context.setParameter("seconds", seconds)
+        if maxnodes is not None:
+            self.cbc_context.setParameter("maxnodes", maxnodes)
+        if maxsolutions is not None:
+            self.cbc_context.setParameter("maxsolutions", maxsolutions)
         if quiet:
             self.cbc_context.setParameter("loglevel", 0)
 
