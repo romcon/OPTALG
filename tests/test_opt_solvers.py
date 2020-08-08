@@ -641,7 +641,7 @@ class TestOptSolvers(unittest.TestCase):
             
             try:
                 solver.solve(problem)
-            except opt.opt_solver.OptSolverError_NotAvailable:
+            except Exception:
                 continue
             
             x = solver.get_primal_variables()

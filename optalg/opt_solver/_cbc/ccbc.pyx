@@ -106,25 +106,37 @@ cdef class CbcContext:
         
         ccbc.Cbc_setParameter(self.model, name, value)
 
+    def setLogLevel(self, value):
+
+        ccbc.Cbc_setLogLevel(self.model, value)
+
+    def getAllowableFractionGap(self):
+
+        return ccbc.Cbc_getAllowableFractionGap(self.model)
+            
+    def setAllowableFractionGap(self, value):
+
+        if value is not None:
+            ccbc.Cbc_setAllowableFractionGap(self.model, value)
+            
+    def getAllowablePercentageGap(self):
+
+        return ccbc.Cbc_getAllowablePercentageGap(self.model)
+            
     def setAllowablePercentageGap(self, value):
 
         if value is not None:
             ccbc.Cbc_setAllowablePercentageGap(self.model, value)
             
-    def setPrimalTolerance(self, value):
-        
-        if value is not None:
-            ccbc.Cbc_setPrimalTolerance(self.model, value)
-            
-    def setDualTolerance(self, value):
-        
-        if value is not None:
-            ccbc.Cbc_setDualTolerance(self.model, value)
-
     def isProvenOptimal(self):
 
         return ccbc.Cbc_isProvenOptimal(self.model)
 
+#  -1 before branchAndBound
+#   0 finished - check isProvenOptimal or isProvenInfeasible to see if solution found (or check value of best solution)
+#   1 stopped - on maxnodes, maxsols, maxtime
+#   2 execution abandoned due to numerical dificulties
+#   5 user programmed interruption
     def status(self):
 
         return ccbc.Cbc_status(self.model)

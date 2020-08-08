@@ -15,21 +15,6 @@ from .problem import OptProblem
 
 class OptSolverCbc(OptSolver):
 
-    parameters = {'tol': 1e-7,
-                  'inf': 1e8,
-                  'derivative_test': 'none',
-                  'hessian_approximation': 'exact',
-                  'linear_solver': 'mumps',
-                  'print_level': 5,
-                  'max_iter': 1000,
-                  'mu_init': 1e-1,
-                  'sb': 'yes',
-                  'expect_infeasible_problem': 'no',
-                  'check_derivatives_for_naninf': 'no',
-                  'diverging_iterates_tol': 1e20,
-                  'max_cpu_time': 1e6,
-                  'quiet': False}
-
     parameters = {'mipgap' : None,
                   'seconds': None,
                   'maxnodes': None,
@@ -41,9 +26,6 @@ class OptSolverCbc(OptSolver):
         """
         Mixed integer linear "branch and cut" solver from COIN-OR.
         """
-
-        # Import
-        from ._cbc import CbcContext
 
         OptSolver.__init__(self)
         self.parameters = OptSolverCbc.parameters.copy()
@@ -96,7 +78,9 @@ class OptSolverCbc(OptSolver):
 
         # Options
         if mipgap is not None:
-            self.cbc_context.setParameter("mipgap", mipgap)
+            old_mipgap = self.cbc_context.getAllowableFractionGap()
+            print("mipgap fraction was {:f} and set to {:f}".format(old_mipgap,mipgap))
+            self.cbc_context.setAllowableFractionGap(mipgap)
         if seconds is not None:
             self.cbc_context.setParameter("seconds", seconds)
         if maxnodes is not None:
@@ -104,14 +88,14 @@ class OptSolverCbc(OptSolver):
         if maxsolutions is not None:
             self.cbc_context.setParameter("maxsolutions", maxsolutions)
         if quiet:
-            self.cbc_context.setParameter("loglevel", 0)
+            self.cbc_context.setLogLevel(0)
 
         # Solve
         self.cbc_context.solve()
 
         # Save
         self.x = self.cbc_context.getColSolution()
-        if self.cbc_context.status() == 0:
+        if self.cbc_context.status() <= 0:
             self.set_status(self.STATUS_SOLVED)
             self.set_error_msg('')
         else:
