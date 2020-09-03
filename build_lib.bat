@@ -22,3 +22,18 @@ IF "%OPTALG_IPOPT%" == "true" (
         python setup.py setopt --command build -o compiler -s msvc
     )
 )
+IF "%OPTALG_CBC%" == "true" ( 
+    IF NOT EXIST "lib/cbc" (
+    	mkdir lib
+    	cd lib
+    	bitsadmin /transfer "JobName" https://bintray.com/coin-or/download/download_file?file_path=Cbc-refactor-win64-msvc16-mdd.zip "%cd%\lib\CBC.zip"
+    	mkdir cbc
+	7z x CBC.zip -o./cbc 
+	ren cbc\lib\Cbc.dll.lib CbcSolver.lib
+	move "%cd%\lib\cbc\include\coin-or" "%cd%\lib\cbc\include\coin"
+        copy cbc\lib\*.lib ..\optalg\opt_solver\_cbc
+	copy cbc\bin\*.dll ..\optalg\opt_solver\_cbc
+  	cd ..\
+	python setup.py setopt --command build -o compiler -s msvc
+     )
+)
