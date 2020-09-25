@@ -17,11 +17,11 @@ from optalg.lin_solver import new_linsolver
 
 class OptSolverNR(OptSolver):
 
-    parameters = {'feastol':1e-4,
+    parameters = {'feastol': 1e-4,
                   'acc_factor': 1.,
-                  'maxiter':100,
-                  'linsolver':'default',
-                  'quiet':False}
+                  'maxiter': 100,
+                  'linsolver': 'default',
+                  'quiet': False}
 
     def __init__(self):
         """
@@ -162,8 +162,8 @@ class OptSolverNR(OptSolver):
                 if not analyzed:
                     self.linsolver.analyze(bmat([[problem.J],[problem.A]]))
                     analyzed = True
-                p = self.linsolver.factorize_and_solve(bmat([[problem.J],[problem.A]]),
-                                                       np.hstack([-fdata.f,-fdata.r]))
+                self.linsolver.factorize(bmat([[problem.J],[problem.A]]))
+                p = self.linsolver.solve(np.hstack([-fdata.f,-fdata.r]))
             except Exception:
                 raise OptSolverError_BadLinSystem(self)
             pmax = norminf(p)
