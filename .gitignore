@@ -38,3 +38,7 @@ ccbc.c
 
 # Setup
 setup.cfg
+
+# Eclipse stuff
+/.project
+/.pydevproject

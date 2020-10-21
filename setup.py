@@ -17,6 +17,7 @@ from distutils import log
 from setuptools.command.build_py import build_py
 from setuptools.command.bdist_egg import bdist_egg
 from wheel.bdist_wheel import bdist_wheel
+from django.templatetags.i18n import language
 
 # External libraries
 if 'darwin' in sys.platform.lower() or 'linux' in sys.platform.lower():
@@ -50,35 +51,45 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
     ext_modules += cythonize([Extension(name='optalg.lin_solver._mumps._dmumps',
                                         sources=['./optalg/lin_solver/_mumps/_dmumps.pyx'],
                                         libraries=libraries_mumps,
-                                        include_dirs=['./lib/ipopt/include/coin/ThirdParty'],
+                                        include_dirs=['./lib/ipopt/include/coin/ThirdParty',
+                                                      './lib/ipopt/include/coin-or'],
                                         library_dirs=['./lib/ipopt/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
     # IPOPT
     ext_modules += cythonize([Extension(name='optalg.opt_solver._ipopt.cipopt',
                                         sources=['./optalg/opt_solver/_ipopt/cipopt.pyx'],
                                         libraries=libraries_ipopt,
-                                        include_dirs=[np.get_include(),'./lib/ipopt/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/ipopt/',
+                                                      './lib/ipopt/include'],
                                         library_dirs=['./lib/ipopt/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 # CLP
 if os.environ.get('OPTALG_CLP') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._clp.cclp',
                                         sources=['./optalg/opt_solver/_clp/cclp.pyx'],
                                         libraries=['Clp'],
-                                        include_dirs=[np.get_include(),'./lib/clp/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/clp/include'],
                                         library_dirs=['./lib/clp/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 # CBC
 if os.environ.get('OPTALG_CBC') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._cbc.ccbc',
                                         sources=['./optalg/opt_solver/_cbc/ccbc.pyx'],
                                         libraries=['CbcSolver'],
-                                        include_dirs=[np.get_include(),'./lib/cbc/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/cbc/',
+                                                      './lib/cbc/include'],
                                         library_dirs=['./lib/cbc/lib'],
-                                        extra_link_args=extra_link_args)])
+                                        extra_link_args=extra_link_args)],
+                                        language_level=3)
 
 exec(open(os.path.join('optalg', 'version.py')).read())
 

@@ -11,7 +11,7 @@ cimport numpy as np
 
 from libc.string cimport memcpy
 
-cimport cipopt
+from . cimport cipopt
 
 np.import_array()
 
