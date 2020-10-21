@@ -31,7 +31,7 @@ if return_code != 0:
 if 'darwin' in sys.platform.lower():
     libraries_mumps = ['coinmumps']
     libraries_ipopt = ['ipopt']
-    extra_link_args = ['-v','-Wl,-rpath,@loader_path/']
+    extra_link_args = ['-Wl,-rpath,@loader_path/']
 elif 'linux' in sys.platform.lower():
     libraries_mumps = ['coinmumps']
     libraries_ipopt = ['ipopt']
@@ -61,7 +61,9 @@ if os.environ.get('OPTALG_IPOPT') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._ipopt.cipopt',
                                         sources=['./optalg/opt_solver/_ipopt/cipopt.pyx'],
                                         libraries=libraries_ipopt,
-                                        include_dirs=[np.get_include(),'./lib/ipopt/','./lib/ipopt/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/ipopt/',
+                                                      './lib/ipopt/include'],
                                         library_dirs=['./lib/ipopt/lib'],
                                         extra_link_args=extra_link_args)],
                                         language_level=3)
@@ -71,7 +73,8 @@ if os.environ.get('OPTALG_CLP') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._clp.cclp',
                                         sources=['./optalg/opt_solver/_clp/cclp.pyx'],
                                         libraries=['Clp'],
-                                        include_dirs=[np.get_include(),'./lib/clp/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/clp/include'],
                                         library_dirs=['./lib/clp/lib'],
                                         extra_link_args=extra_link_args)],
                                         language_level=3)
@@ -81,7 +84,9 @@ if os.environ.get('OPTALG_CBC') == 'true':
     ext_modules += cythonize([Extension(name='optalg.opt_solver._cbc.ccbc',
                                         sources=['./optalg/opt_solver/_cbc/ccbc.pyx'],
                                         libraries=['CbcSolver'],
-                                        include_dirs=[np.get_include(),'./lib/cbc/','./lib/cbc/include'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/cbc/',
+                                                      './lib/cbc/include'],
                                         library_dirs=['./lib/cbc/lib'],
                                         extra_link_args=extra_link_args)],
                                         language_level=3)
