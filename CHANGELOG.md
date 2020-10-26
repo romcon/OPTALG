@@ -10,6 +10,11 @@ Version 1.1.9
 * Added recovery strategy for augl linear system factorization error.
 * Lagrange multiplier extraction from cbc/clp/cplex solutions.
 * Bug fix for MUMPS wrapper by using pointer lengths being platform dependent with `uintptr_t` (from stdint) instead of `unsigned long`.
+* Updated Cython language support to Python3
+* Upgraded Ipopt==3.12.8
+* Upgraded Clp==1.17.6
+* Upgraded Cbc==2.10.5
+* Exposed Cbc settings for 'mipgap', 'maxsolutions', 'maxnodes', and 'seconds' and loglevel
 
 Version 1.1.7
 -------------

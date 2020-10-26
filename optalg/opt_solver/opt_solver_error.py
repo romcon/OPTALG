@@ -18,6 +18,10 @@ class OptSolverError(Exception):
     def __str__(self):
         return str(self.value)
 
+class OptSolverError_NotAvailable(OptSolverError):
+    def __init__(self, solver=None):
+        OptSolverError.__init__(self, solver, 'solver {:s} not available'.format(str(solver)))
+
 class OptSolverError_Cbc(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'cbc solver failed')

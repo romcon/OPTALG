@@ -15,15 +15,17 @@ from .problem import OptProblem
 
 class OptSolverCbc(OptSolver):
 
-    parameters = {'quiet' : False}
+    parameters = {'mipgap' : None,
+                  'seconds': None,
+                  'maxnodes': None,
+                  'maxsolutions': None,
+                  'quiet' : False
+                  }
 
     def __init__(self):
         """
         Mixed integer linear "branch and cut" solver from COIN-OR.
         """
-
-        # Import
-        from ._cbc import CbcContext
 
         OptSolver.__init__(self)
         self.parameters = OptSolverCbc.parameters.copy()
@@ -48,6 +50,10 @@ class OptSolverCbc(OptSolver):
         params = self.parameters
 
         # Parameters
+        mipgap = params['mipgap']
+        seconds = params['seconds']
+        maxnodes = params['maxnodes']
+        maxsolutions = params['maxsolutions']
         quiet = params['quiet']
 
         # Problem
@@ -71,15 +77,25 @@ class OptSolverCbc(OptSolver):
         self.reset()
 
         # Options
+        if mipgap is not None:
+            old_mipgap = self.cbc_context.getAllowableFractionGap()
+            print("mipgap fraction was {:f} and set to {:f}".format(old_mipgap,mipgap))
+            self.cbc_context.setAllowableFractionGap(mipgap)
+        if seconds is not None:
+            self.cbc_context.setParameter("seconds", seconds)
+        if maxnodes is not None:
+            self.cbc_context.setParameter("maxnodes", maxnodes)
+        if maxsolutions is not None:
+            self.cbc_context.setParameter("maxsolutions", maxsolutions)
         if quiet:
-            self.cbc_context.setParameter("loglevel", 0)
+            self.cbc_context.setLogLevel(0)
 
         # Solve
         self.cbc_context.solve()
 
         # Save
         self.x = self.cbc_context.getColSolution()
-        if self.cbc_context.status() == 0:
+        if self.cbc_context.status() <= 0:
             self.set_status(self.STATUS_SOLVED)
             self.set_error_msg('')
         else:
