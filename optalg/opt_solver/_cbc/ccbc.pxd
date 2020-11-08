@@ -45,6 +45,7 @@ cdef extern from "coin/Cbc_C_Interface.h":
     double* Cbc_getColSolution(Cbc_Model* model)
     
     int Cbc_isProvenOptimal(Cbc_Model* model)
+    int Cbc_isProvenInfeasible(Cbc_Model* model)
     
     int Cbc_getLogLevel(Cbc_Model *model);
     void Cbc_setLogLevel(Cbc_Model *model, int logLevel)

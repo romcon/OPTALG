@@ -132,6 +132,10 @@ cdef class CbcContext:
 
         return ccbc.Cbc_isProvenOptimal(self.model)
 
+    def isProvenInfeasible(self):
+
+        return ccbc.Cbc_isProvenInfeasible(self.model)
+
 #  -1 before branchAndBound
 #   0 finished - check isProvenOptimal or isProvenInfeasible to see if solution found (or check value of best solution)
 #   1 stopped - on maxnodes, maxsols, maxtime

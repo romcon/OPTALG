@@ -15,11 +15,11 @@ from .problem import OptProblem
 
 class OptSolverCbc(OptSolver):
 
-    parameters = {'mipgap' : None,
+    parameters = {'mipgap': None,
                   'seconds': None,
                   'maxnodes': None,
                   'maxsolutions': None,
-                  'quiet' : False
+                  'quiet': False
                   }
 
     def __init__(self):
@@ -79,7 +79,8 @@ class OptSolverCbc(OptSolver):
         # Options
         if mipgap is not None:
             old_mipgap = self.cbc_context.getAllowableFractionGap()
-            print("mipgap fraction was {:f} and set to {:f}".format(old_mipgap,mipgap))
+            print("mipgap fraction was {:f} and set to {:f}".format(
+                old_mipgap, mipgap))
             self.cbc_context.setAllowableFractionGap(mipgap)
         if seconds is not None:
             self.cbc_context.setParameter("seconds", seconds)
@@ -96,7 +97,14 @@ class OptSolverCbc(OptSolver):
         # Save
         self.x = self.cbc_context.getColSolution()
         if self.cbc_context.status() <= 0:
-            self.set_status(self.STATUS_SOLVED)
-            self.set_error_msg('')
+            if self.cbc_context.isProvenOptimal():
+                self.set_status(self.STATUS_SOLVED)
+                self.set_error_msg('')
+            elif self.cbc_context.isProvenInfeasible():
+                self.set_status(self.STATUS_ERROR)
+                self.set_error_msg('Problem is infeasible')
+            else:
+                self.set_status(self.STATUS_ERROR)
+                self.set_error_msg('Problem is neither optimal nor infeasible')
         else:
             raise OptSolverError_Cbc(self)
