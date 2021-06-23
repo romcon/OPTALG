@@ -1,3 +1,31 @@
+Version 1.1.10
+--------------
+* Added isProvenInfeasible and Cbc_isProvenInfeasible for OptSolverCbc.
+* Infeasible and non-optimal results treated as STATUS_ERROR in OptSolverCbc.
+* Fix OptSolverClpCMD check for lowercase 'optimal' result to determine optimality (CLP on mac was returing 'Optimal').
+* Fix OptSolverClpCMD read_solution function that was skipping reading the first line of the file.
+* Added Cbc API OptSolverCbc wrapper for getRowActivity and getReducedCost.
+* Added fortran compiler flag `-fallow-argument-mismatch` to compile without argument matching which gcc 10 requires.
+* Added test for OptSolverClp duals.
+
+Version 1.1.9
+-------------
+* Simplified barrier parameters in augl.
+* Added problem properties and methods for checking whether solvers support certain problem properties.
+* Added methods to convert general problem into linear, mixed integer linear, and quadratic problems.
+* Added methods to write lp files from linear and mixed integer linear problems.
+* Added command-line interfaces for cbc and clp.
+* Added command-line interface for cplex.
+* Added acceleration factor to nr.
+* Added recovery strategy for augl linear system factorization error.
+* Lagrange multiplier extraction from cbc/clp/cplex solutions.
+* Bug fix for MUMPS wrapper by using pointer lengths being platform dependent with `uintptr_t` (from stdint) instead of `unsigned long`.
+* Updated Cython language support to Python3
+* Upgraded Ipopt==3.12.8
+* Upgraded Clp==1.17.6
+* Upgraded Cbc==2.10.5
+* Exposed Cbc settings for 'mipgap', 'maxsolutions', 'maxnodes', and 'seconds' and loglevel
+
 Version 1.1.7
 -------------
 - Got CBC interface working again on Linux.

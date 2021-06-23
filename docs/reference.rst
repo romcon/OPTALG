@@ -1,3 +1,5 @@
+.. include:: defs.hrst
+
 .. _reference:
 
 *************
@@ -16,7 +18,7 @@ Linear Solvers
 
 .. autoclass:: optalg.lin_solver.mumps.LinSolverMUMPS
 .. autoclass:: optalg.lin_solver.superlu.LinSolverSUPERLU
-.. autoclass:: optalg.lin_solver.umfpack.LinSolverUMFPACK			      
+.. autoclass:: optalg.lin_solver.umfpack.LinSolverUMFPACK
 
 Optimization Problems
 =====================
@@ -52,6 +54,10 @@ Optimization Solvers
 
 .. autoclass:: optalg.opt_solver.clp.OptSolverClp
 
+.. autoclass:: optalg.opt_solver.clp_cmd.OptSolverClpCMD
+
 .. autoclass:: optalg.opt_solver.cbc.OptSolverCbc
 
+.. autoclass:: optalg.opt_solver.cbc_cmd.OptSolverCbcCMD
 
+.. autoclass:: optalg.opt_solver.cplex_cmd.OptSolverCplexCMD

@@ -6,16 +6,17 @@
 # OPTALG is released under the BSD 2-clause license. #
 #****************************************************#
 
+
 class LinSolver:
 
     # Class constants
     SYMMETRIC = 'symmetric'
     UNSYMMETRIC = 'unsymmetric'
-    
+
     def __init__(self, prop='unsymmetric'):
         """
         Linear solver class.
-        
+
         Parameters
         ----------
         prop : {``symmetric``, ``unsymmetric``}
@@ -27,13 +28,13 @@ class LinSolver:
 
         #: Name (string)
         self.name = ''
-            
+
         #: Linear system property {``'symmetric'``, ``'unsymmetric'``}.
         self.prop = prop
 
         #: Flag that specifies whether the matrix has been analyzed.
         self.analyzed = False
-        
+
     def is_analyzed(self):
         """
         Determine whether the matrix has been analyzed.
@@ -55,7 +56,7 @@ class LinSolver:
         """
 
         self.analyzed = True
-        
+
     def factorize(self, A):
         """
         Factorizes A.
@@ -70,11 +71,11 @@ class LinSolver:
     def solve(self, b):
         """
         Solves system Ax=b.
-        
+
         Parameters
         ----------
         b: vector
-        
+
         Returns
         -------
         x : vector
@@ -94,7 +95,3 @@ class LinSolver:
         self.factorize(A)
 
         return self.solve(b)
-
-        
-
-        

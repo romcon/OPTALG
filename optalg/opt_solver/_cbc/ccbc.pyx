@@ -9,7 +9,7 @@
 import numpy as np
 cimport numpy as np
 
-cimport ccbc
+from . cimport ccbc
 
 np.import_array()
 
@@ -106,10 +106,41 @@ cdef class CbcContext:
         
         ccbc.Cbc_setParameter(self.model, name, value)
 
+    def setLogLevel(self, value):
+
+        ccbc.Cbc_setLogLevel(self.model, value)
+
+    def getAllowableFractionGap(self):
+
+        return ccbc.Cbc_getAllowableFractionGap(self.model)
+            
+    def setAllowableFractionGap(self, value):
+
+        if value is not None:
+            ccbc.Cbc_setAllowableFractionGap(self.model, value)
+            
+    def getAllowablePercentageGap(self):
+
+        return ccbc.Cbc_getAllowablePercentageGap(self.model)
+            
+    def setAllowablePercentageGap(self, value):
+
+        if value is not None:
+            ccbc.Cbc_setAllowablePercentageGap(self.model, value)
+            
     def isProvenOptimal(self):
 
         return ccbc.Cbc_isProvenOptimal(self.model)
 
+    def isProvenInfeasible(self):
+
+        return ccbc.Cbc_isProvenInfeasible(self.model)
+
+#  -1 before branchAndBound
+#   0 finished - check isProvenOptimal or isProvenInfeasible to see if solution found (or check value of best solution)
+#   1 stopped - on maxnodes, maxsols, maxtime
+#   2 execution abandoned due to numerical dificulties
+#   5 user programmed interruption
     def status(self):
 
         return ccbc.Cbc_status(self.model)
@@ -122,4 +153,14 @@ cdef class CbcContext:
 
         n = ccbc.Cbc_getNumCols(self.model)
         return ArrayDouble(<double*>ccbc.Cbc_getColSolution(self.model),n)
+
+    def getRowActivity(self):
+
+        n = ccbc.Cbc_getNumCols(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getRowActivity(self.model),n)
+
+    def getReducedCost(self):
+
+        m = ccbc.Cbc_getNumRows(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getReducedCost(self.model),m)
 

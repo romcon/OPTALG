@@ -1,7 +1,7 @@
 #****************************************************#
 # This file is part of OPTALG.                       #
 #                                                    #
-# Copyright (c) 2015, Tomas Tinoco De Rubira.        #
+# Copyright (c) 2019, Tomas Tinoco De Rubira.        #
 #                                                    #
 # OPTALG is released under the BSD 2-clause license. #
 #****************************************************#
@@ -9,12 +9,13 @@
 from __future__ import print_function
 import numpy as np
 from .opt_solver_error import *
-from .problem import cast_problem
+from .problem import cast_problem, OptProblem
 from .opt_solver import OptSolver
 from scipy.sparse import bmat
 
+
 class OptSolverIpopt(OptSolver):
-    
+
     parameters = {'tol': 1e-7,
                   'inf': 1e8,
                   'derivative_test': 'none',
@@ -29,30 +30,45 @@ class OptSolverIpopt(OptSolver):
                   'diverging_iterates_tol': 1e20,
                   'max_cpu_time': 1e6,
                   'quiet': False}
-    
+
     def __init__(self):
         """
         Interior point nonlinear optimization algorithm from COIN-OR.
         """
-        
+
+        # Import
+        from ._ipopt import IpoptContext
+
         OptSolver.__init__(self)
         self.parameters = OptSolverIpopt.parameters.copy()
 
+    def supports_properties(self, properties):
+
+        for p in properties:
+            if p not in [OptProblem.PROP_CURV_LINEAR,
+                         OptProblem.PROP_CURV_QUADRATIC,
+                         OptProblem.PROP_CURV_NONLINEAR,
+                         OptProblem.PROP_VAR_CONTINUOUS,
+                         OptProblem.PROP_TYPE_FEASIBILITY,
+                         OptProblem.PROP_TYPE_OPTIMIZATION]:
+                return False
+        return True
+
     def create_ipopt_context(self):
-        
+
         # Import
         from ._ipopt import IpoptContext
 
         # Problem
         problem = self.problem
-        
+
         # Parameters
         inf = self.parameters['inf']
 
         def eval_f(x):
             problem.eval(x)
             return problem.phi
-            
+
         def eval_grad_f(x):
             problem.eval(x)
             return problem.gphi
@@ -95,12 +111,12 @@ class OptSolverIpopt(OptSolver):
                             eval_grad_f,
                             eval_jac_g,
                             eval_h)
-                
-    def solve(self,problem):
-        
+
+    def solve(self, problem):
+
         # Local vars
         params = self.parameters
-        
+
         # Parameters
         quiet = params['quiet']
         tol = params['tol']
@@ -146,10 +162,10 @@ class OptSolverIpopt(OptSolver):
             x0 = problem.x.copy()
         else:
             x0 = (problem.u+problem.l)/2
-        
+
         # Solve
         results = self.ipopt_context.solve(x0)
-        
+
         # Save
         self.k = results['k']
         self.x = results['x'].copy()
@@ -161,5 +177,7 @@ class OptSolverIpopt(OptSolver):
             self.set_status(self.STATUS_SOLVED)
             self.set_error_msg('')
         else:
-            raise OptSolverError_Ipopt(self)
-            
+            pm = np.append(np.where(self.pi < 1.0e-12)[0], np.where(self.mu < 1.0e-12)[0])
+            pm = np.unique(pm)
+            error_msg = ','.join(map(str, pm))
+            raise OptSolverError_Ipopt(self, results['status'], error_msg)

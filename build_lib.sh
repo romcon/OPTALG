@@ -1,16 +1,19 @@
 #! /bin/sh
+set -e
 
 # IPOPT and MUMPS
 if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
     mkdir -p lib
     cd lib
-    wget https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.8.zip
+    if [ ! -f Ipopt-3.12.8.zip ]; then
+      wget https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.8.zip
+    fi
     unzip Ipopt-3.12.8.zip
     mv Ipopt-3.12.8 ipopt
     cd ipopt/ThirdParty/Mumps
     ./get.Mumps
     cd ../../
-    ./configure
+    ./configure FFLAGS='-fallow-argument-mismatch'  # needed to compile mumps with gcc 10
     make clean
     make uninstall
     make
@@ -29,11 +32,13 @@ fi
 if [ ! -d "lib/clp" ] && [ "$OPTALG_CLP" = true ]; then
     mkdir -p lib
     cd lib
-    wget https://www.coin-or.org/download/source/Clp/Clp-1.16.11.zip 
-    unzip Clp-1.16.11.zip
-    mv Clp-1.16.11 clp
+    if [ ! -f Clp-1.17.6.zip ]; then
+      wget https://www.coin-or.org/download/source/Clp/Clp-1.17.6.zip
+    fi
+    unzip -u Clp-1.17.6.zip
+    mv Clp-1.17.6 clp
     cd clp
-    ./configure
+    ./configure --prefix=$PWD
     make clean
     make uninstall
     make
@@ -49,20 +54,21 @@ fi
 if [ ! -d "lib/cbc" ] && [ "$OPTALG_CBC" = true ]; then
     mkdir -p lib
     cd lib
-    wget https://www.coin-or.org/download/source/Cbc/Cbc-2.9.9.zip
-    unzip Cbc-2.9.9.zip
-    mv Cbc-2.9.9 cbc
+    if [ ! -f Cbc-2.10.5.zip ]; then
+      wget https://www.coin-or.org/download/source/Cbc/Cbc-2.10.5.zip
+    fi
+    unzip Cbc-2.10.5.zip
+    mv Cbc-2.10.5 cbc
     cd cbc
-    ./configure
+    ./configure --prefix=$PWD
     make clean
     make uninstall
     make
     make install
     if [ "$(uname)" == "Darwin" ]; then
-      install_name_tool -id "@rpath/libCbc.1.dylib" lib/libCbc.1.dylib
+      # TBD: Why has the Cbc major version number changed to 3 in the dylib file names.
+      install_name_tool -id "@rpath/libCbc.3.dylib" lib/libCbc.3.dylib
     fi
     cp lib/libCbc* ../../optalg/opt_solver/_cbc
     cd ../../
 fi
-
-

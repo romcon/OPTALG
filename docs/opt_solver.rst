@@ -1,12 +1,14 @@
+.. include:: defs.hrst
+
 .. _opt_solver:
 
 ********************
 Optimization Solvers
 ********************
 
-In OPTALG, optimization solvers are objects of type :class:`OptSolver <optalg.opt_solver.opt_solver.OptSolver>`, and optimization problems are objects of type :class:`OptProblem <optalg.opt_solver.problem.OptProblem>` and represent general problems of the form 
+In OPTALG, optimization solvers are objects of type :class:`OptSolver <optalg.opt_solver.opt_solver.OptSolver>`, and optimization problems are objects of type :class:`OptProblem <optalg.opt_solver.problem.OptProblem>` and represent general problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
@@ -17,7 +19,7 @@ In OPTALG, optimization solvers are objects of type :class:`OptSolver <optalg.op
    &                   \quad && Px \in \{0,1\}^m,\ &&
    \end{alignat*}
 
-where :math:`P` is a matrix that extracts a sub-vector of :math:`x`. 
+where :math:`P` is a matrix that extracts a sub-vector of :math:`x`.
 
 Before solving a :class:`problem <optalg.opt_solver.problem.OptProblem>` with a specific solver, the solver parameters can be configured using the method :func:`set_parameters() <optalg.opt_solver.opt_solver.OptSolver.set_parameters>`. Then, the :func:`solve() <optalg.opt_solver.opt_solver.OptSolver.solve>` method can be invoked with the :class:`problem <optalg.opt_solver.problem.OptProblem>` to be solved as its argument. The status, optimal primal variables, and optimal dual variables can be extracted using the class methods :func:`get_status() <optalg.opt_solver.opt_solver.OptSolver.get_status>`, :func:`get_primal_variables() <optalg.opt_solver.opt_solver.OptSolver.get_primal_variables>`, and :func:`get_dual_variables() <optalg.opt_solver.opt_solver.OptSolver.get_dual_variables>`, respectively.
 
@@ -28,7 +30,7 @@ NR
 
 This solver, which corresponds to the class :class:`OptSolverNR <optalg.opt_solver.nr.OptSolverNR>`, solves problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{2}
@@ -44,9 +46,9 @@ using the Newton-Raphson algorithm. It requires the number of variables to be eq
 Clp
 ===
 
-This is a wrapper of the solver `Clp`_ from COIN-OR. It corresponds to the class :class:`OptSolverClp <optalg.opt_solver.clp.OptSolverClp>`, and solves problems of the form 
+This is a wrapper of the solver `Clp`_ from COIN-OR. It corresponds to the class :class:`OptSolverClp <optalg.opt_solver.clp.OptSolverClp>`, and solves problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
@@ -62,9 +64,9 @@ Linear optimization problems solved with this solver must be instances of the cl
 Cbc
 ===
 
-This is a wrapper of the solver `Cbc`_ from COIN-OR. It corresponds to the class :class:`OptSolverCbc <optalg.opt_solver.cbc.OptSolverCbc>`, and solves problems of the form 
+This is a wrapper of the solver `Cbc`_ from COIN-OR. It corresponds to the class :class:`OptSolverCbc <optalg.opt_solver.cbc.OptSolverCbc>`, and solves problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
@@ -83,7 +85,7 @@ IQP
 
 This solver, which corresponds to the class :class:`OptSolverIQP <optalg.opt_solver.iqp.OptSolverIQP>`, solves convex quadratic problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
@@ -94,7 +96,7 @@ This solver, which corresponds to the class :class:`OptSolverIQP <optalg.opt_sol
 
 using a primal-dual interior-point algorithm. Quadratic problems solved with this solver must be instances of the class :class:`QuadProblem <optalg.opt_solver.problem_quad.QuadProblem>`, which is a subclass of :class:`OptProblem <optalg.opt_solver.problem.OptProblem>`. The following example shows how to solve the quadratic problem
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{2}
@@ -128,7 +130,7 @@ using :class:`OptSolverIQP <optalg.opt_solver.iqp.OptSolverIQP>`::
 
   >>> solver.solve(problem)
 
-  >>> print solver.get_status()
+  >>> print(solver.get_status())
   solved
 
 Then, the optimal primal and dual variables can be extracted, and feasibility and optimality can be checked as follows::
@@ -136,32 +138,32 @@ Then, the optimal primal and dual variables can be extracted, and feasibility an
   >>> x = solver.get_primal_variables()
   >>> lam,nu,mu,pi = solver.get_dual_variables()
 
-  >>> print x
+  >>> print(x)
   [ 0.20  0.80 ]
 
-  >>> print x[0] + x[1]
+  >>> print(x[0] + x[1])
   1.00
 
-  >>> print l <= x
+  >>> print(l <= x)
   [ True  True ]
 
-  >>> print x <= u
+  >>> print(x <= u)
   [ True  True ]
 
-  >>> print pi
+  >>> print(pi)
   [ 9.00e-01  1.80e-06 ]
 
-  >>> print mu
+  >>> print(mu)
   [ 1.80e-06  9.00e-01 ]
 
-  >>> print np.linalg.norm(g+np.dot(H,x)-np.dot(A.T,lam)+mu-pi)
-  1.25e-15
+  >>> print(np.linalg.norm(g+np.dot(H,x)-np.dot(A.T,lam)+mu-pi))
+  9.43e-16
 
-  >>> print np.dot(mu,u-x)
-  2.16e-06
+  >>> print(np.dot(mu,u-x))
+  2.07e-06
 
-  >>> print np.dot(pi,x-l)
-  2.16e-06
+  >>> print(np.dot(pi,x-l))
+  2.07e-06
 
 .. _opt_solver_inlp:
 
@@ -170,7 +172,7 @@ INLP
 
 This solver, which corresponds to the class :class:`OptSolverINLP <optalg.opt_solver.inlp.OptSolverINLP>`, solves general nonlinear optimization problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
@@ -189,14 +191,14 @@ AugL
 
 This solver, which corresponds to the class :class:`OptSolverAugL <optalg.opt_solver.augl.OptSolverAugL>`, solves optimization problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}
    & \mbox{minimize}   \quad && \varphi(x)     \ && \\
    & \mbox{subject to} \quad && Ax = b         \ && : \lambda \\
    &                   \quad && f(x) = 0       \ && : \nu \\
-   &                   \quad && l \le x \le u  \ && : \pi, \mu 
+   &                   \quad && l \le x \le u  \ && : \pi, \mu
    \end{alignat*}
 
 using an Augmented Lagrangian algorithm. It requires the objective function :math:`\varphi` to be convex.
@@ -208,7 +210,7 @@ Ipopt
 
 This is a wrapper of the solver `IPOPT`_ from COIN-OR. It corresponds to the class :class:`OptSolverIpopt <optalg.opt_solver.ipopt.OptSolverIpopt>`, and solves optimization problems of the form
 
-.. math:: 
+.. math::
    :nowrap:
 
    \begin{alignat*}{3}

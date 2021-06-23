@@ -9,7 +9,7 @@
 import numpy as np
 cimport numpy as np
 
-cimport cclp
+from . cimport cclp
 
 np.import_array()
 
@@ -104,11 +104,6 @@ cdef class ClpContext:
 
         n = cclp.Clp_numberColumns(self.model)
         return ArrayDouble(cclp.Clp_primalColumnSolution(self.model),n)
-
-    def primalRowSolution(self):
-
-        m = cclp.Clp_numberRows(self.model)
-        return ArrayDouble(cclp.Clp_primalRowSolution(self.model),m)
 
     def dualColumnSolution(self):
 

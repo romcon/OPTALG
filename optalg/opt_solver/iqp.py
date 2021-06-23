@@ -1,7 +1,7 @@
 #****************************************************#
 # This file is part of OPTALG.                       #
 #                                                    #
-# Copyright (c) 2015, Tomas Tinoco De Rubira.        #
+# Copyright (c) 2019, Tomas Tinoco De Rubira.        #
 #                                                    #
 # OPTALG is released under the BSD 2-clause license. #
 #****************************************************#
@@ -10,21 +10,21 @@ from __future__ import print_function
 import numpy as np
 from .opt_solver_error import *
 from .opt_solver import OptSolver
-from .problem import cast_problem
-from .problem_quad import QuadProblem
+from .problem import cast_problem, OptProblem
 from optalg.lin_solver import new_linsolver
-from scipy.sparse import bmat,triu,eye,spdiags,coo_matrix,tril
+from scipy.sparse import bmat, triu, eye, spdiags, coo_matrix, tril
+
 
 class OptSolverIQP(OptSolver):
     """
     Interior-point quadratic program solver.
     """
-    
+
     # Solver parameters
     parameters = {'tol': 1e-4,            # optimality tolerance
                   'maxiter': 1000,        # max iterations
                   'sigma': 0.1,           # factor for increasing subproblem solution accuracy
-                  'eps': 1e-3,            # boundary proximity factor 
+                  'eps': 1e-3,            # boundary proximity factor
                   'eps_cold': 1e-2,       # boundary proximity factor (cold start)
                   'linsolver': 'default', # linear solver
                   'quiet': False}         # quiet flag
@@ -33,13 +33,24 @@ class OptSolverIQP(OptSolver):
         """
         Interior-point quadratic program solver.
         """
-        
+
         # Init
         OptSolver.__init__(self)
         self.parameters = OptSolverIQP.parameters.copy()
         self.linsolver = None
-        
-    def solve(self,problem):
+
+    def supports_properties(self, properties):
+
+        for p in properties:
+            if p not in [OptProblem.PROP_CURV_LINEAR,
+                         OptProblem.PROP_CURV_QUADRATIC,
+                         OptProblem.PROP_VAR_CONTINUOUS,
+                         OptProblem.PROP_TYPE_FEASIBILITY,
+                         OptProblem.PROP_TYPE_OPTIMIZATION]:
+                return False
+        return True
+
+    def solve(self, problem):
         """
         Solves optimization problem.
 
@@ -47,12 +58,12 @@ class OptSolverIQP(OptSolver):
         ----------
         problem : Object
         """
-    
+
         # Local vars
         norm2 = self.norm2
         norminf = self.norminf
         parameters = self.parameters
-        
+
         # Parameters
         tol = parameters['tol']
         maxiter = parameters['maxiter']
@@ -62,13 +73,13 @@ class OptSolverIQP(OptSolver):
         eps_cold = parameters['eps_cold']
 
         # Problem
-        if not isinstance(problem,QuadProblem):
+        try:
             problem = cast_problem(problem)
-            quad_problem = QuadProblem(None,None,None,None,None,None,problem=problem)
-        else:
-            quad_problem = problem
-        self.problem = problem
-        self.quad_problem = quad_problem
+            quad_problem = problem.to_quad()
+            self.problem = problem
+            self.quad_problem = quad_problem
+        except:
+            raise OptSolverError_BadProblemType(self)
 
         # Linsolver
         self.linsolver = new_linsolver(parameters['linsolver'],'symmetric')
@@ -79,7 +90,7 @@ class OptSolverIQP(OptSolver):
         # Checks
         if not np.all(problem.l <= problem.u):
             raise OptSolverError_NoInterior(self)
-    
+
         # Data
         self.H = quad_problem.H
         self.g = quad_problem.g
@@ -117,7 +128,7 @@ class OptSolverIQP(OptSolver):
 
         # Check interior
         try:
-            assert(np.all(self.l < self.x)) 
+            assert(np.all(self.l < self.x))
             assert(np.all(self.x < self.u))
             assert(np.all(self.mu > 0))
             assert(np.all(self.pi > 0))
@@ -142,7 +153,7 @@ class OptSolverIQP(OptSolver):
         if not quiet:
             print('\nSolver: IQP')
             print('-----------')
-                                   
+
         # Outer
         s = 0.
         self.k = 0
@@ -151,12 +162,12 @@ class OptSolverIQP(OptSolver):
             # Complementarity measures
             self.eta_mu = np.dot(self.mu,self.u-self.x)/self.x.size
             self.eta_pi = np.dot(self.pi,self.x-self.l)/self.x.size
-            
+
             # Init eval
             fdata = self.func(self.y)
             fmax = norminf(fdata.f)
             gmax = norminf(fdata.GradF)
-            
+
             # Done
             if fmax < tol and sigma*np.maximum(self.eta_mu,self.eta_pi) < tol:
                 self.set_status(self.STATUS_SOLVED)
@@ -165,7 +176,7 @@ class OptSolverIQP(OptSolver):
 
             # Target
             tau = sigma*norminf(fdata.GradF)
-           
+
             # Header
             if not quiet:
                 if self.k > 0:
@@ -177,10 +188,10 @@ class OptSolverIQP(OptSolver):
                 print('{0:^8s}'.format('cu'), end=' ')
                 print('{0:^8s}'.format('cl'), end=' ')
                 print('{0:^8s}'.format('s'))
- 
+
             # Inner
             while True:
-                
+
                 # Eval
                 fdata = self.func(self.y)
                 fmax = norminf(fdata.f)
@@ -188,7 +199,7 @@ class OptSolverIQP(OptSolver):
                 compu = norminf(self.mu*(self.u-self.x))
                 compl = norminf(self.pi*(self.x-self.l))
                 phi = (0.5*np.dot(self.x,self.H*self.x)+np.dot(self.g,self.x))*self.obj_sca
-                
+
                 # Show progress
                 if not quiet:
                     print('{0:^3d}'.format(self.k), end=' ')
@@ -198,7 +209,7 @@ class OptSolverIQP(OptSolver):
                     print('{0:^8.1e}'.format(compu), end=' ')
                     print('{0:^8.1e}'.format(compl), end=' ')
                     print('{0:^8.1e}'.format(s))
-                
+
                 # Done
                 if gmax < tau:
                     break
@@ -210,7 +221,7 @@ class OptSolverIQP(OptSolver):
                 # Maxiters
                 if self.k >= maxiter:
                     raise OptSolverError_MaxIters(self)
-                    
+
                 # Search direction
                 ux = self.u-self.x
                 xl = self.x-self.l
@@ -244,7 +255,7 @@ class OptSolverIQP(OptSolver):
                 indices = ppi < 0
                 s4 = np.min(np.hstack(((eps-1.)*self.pi[indices]/ppi[indices],np.inf)))
                 smax = np.min([s1,s2,s3,s4])
-                
+
                 # Line search
                 s,fdata = self.line_search(self.y,p,fdata.F,fdata.GradF,self.func,smax)
 
@@ -267,14 +278,14 @@ class OptSolverIQP(OptSolver):
 
         n = self.n
         m = self.m
-        
+
         x = y[:n]
         lam = y[n:n+m]
         mu = y[n+m:2*n+m]
         pi = y[2*n+m:]
 
         return x,lam,mu,pi
-        
+
     def func(self,y):
 
         fdata = self.fdata
@@ -283,19 +294,19 @@ class OptSolverIQP(OptSolver):
         x,lam,mu,pi = self.extract_components(y)
         ux = self.u-x
         xl = x-self.l
-        
+
         rd = self.H*x+self.g-self.AT*lam+mu-pi       # dual residual
         rp = self.A*x-self.b                         # primal residual
         ru = mu*ux-sigma*self.eta_mu*self.e  # residual of perturbed complementarity
         rl = pi*xl-sigma*self.eta_pi*self.e  # residual of perturbed complementarity
-        
-        Dmu = spdiags(self.mu,0,self.n,self.n) 
+
+        Dmu = spdiags(self.mu,0,self.n,self.n)
         Dux = spdiags(ux,0,self.n,self.n)
         Dpi = spdiags(self.pi,0,self.n,self.n)
         Dxl = spdiags(xl,0,self.n,self.n)
 
         f = np.hstack((rd,rp,ru,rl))
-        
+
         J = bmat([[self.H,-self.AT,self.I,-self.I],
                   [self.A,None,None,None],
                   [-Dmu,None,Dux,None],
@@ -307,7 +318,7 @@ class OptSolverIQP(OptSolver):
         fdata.rl = rl
         fdata.f = f
         fdata.J = J
-        
+
         fdata.F = 0.5*np.dot(f,f) # merit function
         fdata.GradF = J.T*f       # gradient of merit function
 
