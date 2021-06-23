@@ -17,7 +17,7 @@ from distutils import log
 from setuptools.command.build_py import build_py
 from setuptools.command.bdist_egg import bdist_egg
 from wheel.bdist_wheel import bdist_wheel
-from django.templatetags.i18n import language
+
 
 # External libraries
 if 'darwin' in sys.platform.lower() or 'linux' in sys.platform.lower():

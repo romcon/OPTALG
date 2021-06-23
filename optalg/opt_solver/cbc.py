@@ -96,6 +96,7 @@ class OptSolverCbc(OptSolver):
 
         # Save
         self.x = self.cbc_context.getColSolution()
+        # TODO: how to get duals from API?
         if self.cbc_context.status() <= 0:
             if self.cbc_context.isProvenOptimal():
                 self.set_status(self.STATUS_SOLVED)
@@ -108,3 +109,7 @@ class OptSolverCbc(OptSolver):
                 self.set_error_msg('Problem is neither optimal nor infeasible')
         else:
             raise OptSolverError_Cbc(self)
+
+    def get_dual_variables(self):
+        # Remove once implemented
+        print("Cbc API is not currently able to get dual variables")

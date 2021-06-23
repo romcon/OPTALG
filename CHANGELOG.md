@@ -1,3 +1,13 @@
+Version 1.1.10
+--------------
+* Added isProvenInfeasible and Cbc_isProvenInfeasible for OptSolverCbc.
+* Infeasible and non-optimal results treated as STATUS_ERROR in OptSolverCbc.
+* Fix OptSolverClpCMD check for lowercase 'optimal' result to determine optimality (CLP on mac was returing 'Optimal').
+* Fix OptSolverClpCMD read_solution function that was skipping reading the first line of the file.
+* Added Cbc API OptSolverCbc wrapper for getRowActivity and getReducedCost.
+* Added fortran compiler flag `-fallow-argument-mismatch` to compile without argument matching which gcc 10 requires.
+* Added test for OptSolverClp duals.
+
 Version 1.1.9
 -------------
 * Simplified barrier parameters in augl.

@@ -154,3 +154,13 @@ cdef class CbcContext:
         n = ccbc.Cbc_getNumCols(self.model)
         return ArrayDouble(<double*>ccbc.Cbc_getColSolution(self.model),n)
 
+    def getRowActivity(self):
+
+        n = ccbc.Cbc_getNumCols(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getRowActivity(self.model),n)
+
+    def getReducedCost(self):
+
+        m = ccbc.Cbc_getNumRows(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getReducedCost(self.model),m)
+
