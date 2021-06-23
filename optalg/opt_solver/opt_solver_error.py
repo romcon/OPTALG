@@ -55,12 +55,50 @@ class OptSolverError_CplexCMDCall(OptSolverError):
         OptSolverError.__init__(self, solver, 'error while calling cplex command-line solver')
 
 class OptSolverError_Ipopt(OptSolverError):
-    def __init__(self, solver=None):
-        OptSolverError.__init__(self, solver, 'ipopt solver failed')
+    def __init__(self, solver=None, value=None, add_values = None):
+        error_msg = ''
+        if int(value) == 2:
+            error_msg = 'Infeasible problem '
+            if add_values:
+                error_msg += add_values
+        elif int(value) == 3:
+            error_msg = 'Search direction too small'
+        elif int(value) == 4:
+            error_msg = 'Diverging iterates'
+        elif int(value) == 5:
+            error_msg = 'User requested stop'
+        elif int(value) == -1:
+            error_msg = 'Iteration exceeded'
+        elif int(value) == -2:
+            error_msg = 'Restoration failed '
+            if add_values:
+                error_msg += add_values
+        elif int(value) == -3:
+            error_msg = 'Error in step computation'
+        elif int(value) == -4:
+            error_msg = 'CPU time exceeded'
+        elif int(value) == -10:
+            error_msg = 'Not enough degree of freedom'
+        elif int(value) == -11:
+            error_msg = 'Invalid problem definition'
+        elif int(value) == -12:
+            error_msg = 'Invalid option'
+        elif int(value) == -13:
+            error_msg = 'Invalid number detected'
+        elif int(value) == -102:
+            error_msg = 'Insufficient memory'
+        else:
+            error_msg = 'Other IPOPT exceptions'
+        
+        OptSolverError.__init__(self, solver, 'ipopt solver failed: ' + error_msg)
 
 class OptSolverError_NumProblems(OptSolverError):
     def __init__(self, solver=None):
         OptSolverError.__init__(self, solver, 'numerical problems')
+
+class OptSolverError_NarrowBounded(OptSolverError):
+    def __init__(self, solver=None, value=None):
+        OptSolverError.__init__(self, solver, 'narrow bounded '+value)
 
 class OptSolverError_LineSearch(OptSolverError):
     def __init__(self, solver=None):

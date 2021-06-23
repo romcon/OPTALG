@@ -177,4 +177,7 @@ class OptSolverIpopt(OptSolver):
             self.set_status(self.STATUS_SOLVED)
             self.set_error_msg('')
         else:
-            raise OptSolverError_Ipopt(self)
+            pm = np.append(np.where(self.pi < 1.0e-12)[0], np.where(self.mu < 1.0e-12)[0])
+            pm = np.unique(pm)
+            error_msg = ','.join(map(str, pm))
+            raise OptSolverError_Ipopt(self, results['status'], error_msg)

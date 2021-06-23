@@ -302,7 +302,11 @@ class OptSolverAugL(OptSolver):
             a2 = np.min(((barrier.umin-self.x)[pneg])/(p[pneg])) if pneg.sum() else np.inf
             alpha_max = 0.98*min([a1,a2])
             if not alpha_max:
-                raise OptSolverError_NumProblems(self)
+                ind1 = np.where((barrier.umax-self.x) == 0)[0]
+                ind2 = np.where((barrier.umin-self.x) == 0)[0]
+                vio_list = [i for i in ind2]+[i for i in ind1]
+                vio_string = ','.join(map(str, vio_list))
+                raise OptSolverError_NarrowBounded(self, vio_string)
 
             try:
 
