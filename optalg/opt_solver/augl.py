@@ -113,7 +113,7 @@ class OptSolverAugL(OptSolver):
         else:
             self.lam = np.zeros(problem.b.size)
         if problem.nu is not None:
-                self.nu = problem.nu.copy()
+            self.nu = problem.nu.copy()
         else:
             self.nu = np.zeros(problem.f.size)
         try:
@@ -162,8 +162,8 @@ class OptSolverAugL(OptSolver):
         gLmax_prev = norminf(fdata.GradF)
 
         # Init dual update
+        self.update_multiplier_estimates()
         if pres_prev <= feastol:
-            self.update_multiplier_estimates()
             fdata = self.func(self.x)
 
         # Outer iterations
@@ -184,7 +184,7 @@ class OptSolverAugL(OptSolver):
             dres = norminf(fdata.dres)
             gLmax = norminf(fdata.GradF)
 
-            # Penaly update
+            # Penatly update
             if pres <= np.maximum(gamma*pres_prev,feastol):
                 self.sigma *= beta_large
                 self.code[1] = 'p'
