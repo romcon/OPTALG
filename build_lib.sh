@@ -1,4 +1,5 @@
 #! /bin/sh
+set -e
 
 # IPOPT and MUMPS
 if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
@@ -12,7 +13,7 @@ if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
     cd ipopt/ThirdParty/Mumps
     ./get.Mumps
     cd ../../
-    ./configure
+    ./configure FFLAGS='-fallow-argument-mismatch'  # needed to compile mumps with gcc 10
     make clean
     make uninstall
     make

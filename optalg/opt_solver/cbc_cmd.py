@@ -46,30 +46,30 @@ class OptSolverCbcCMD(OptSolver):
 
     def read_solution(self, filename, problem):
 
-        f = open(filename, 'r')
+        fp = open(filename, 'r')
 
-        l = f.readline().split()
-        status = l[0]
+        line = fp.readline().split()
+        status = line[0]
 
         x = np.zeros(problem.c.size)
         lam = np.zeros(problem.A.shape[0])
         nu = np.zeros(0)
         mu = np.zeros(x.size)
         pi = np.zeros(x.size)
-        for l in f:
-            l = l.split()
-            name = l[1]
+        for line in fp:
+            line = line.split()
+            name = line[1]
             if name[0] == 'x':
                 i = int(name.split('_')[1])
-                x[i] = float(l[2])
-                if float(l[3]) > 0.:
-                    pi[i] = float(l[3])
+                x[i] = float(line[2])
+                if float(line[3]) > 0.:
+                    pi[i] = float(line[3])
                 else:
-                    mu[i] = -float(l[3])
+                    mu[i] = -float(line[3])
             elif name[0] == 'c':
                 i = int(name.split('_')[1])
-                lam[i] = float(l[3])
-        f.close()
+                lam[i] = float(line[3])
+        fp.close()
         return status, x, lam, nu, mu, pi
 
     def solve(self, problem):

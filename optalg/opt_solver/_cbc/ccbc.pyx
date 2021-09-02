@@ -132,6 +132,10 @@ cdef class CbcContext:
 
         return ccbc.Cbc_isProvenOptimal(self.model)
 
+    def isProvenInfeasible(self):
+
+        return ccbc.Cbc_isProvenInfeasible(self.model)
+
 #  -1 before branchAndBound
 #   0 finished - check isProvenOptimal or isProvenInfeasible to see if solution found (or check value of best solution)
 #   1 stopped - on maxnodes, maxsols, maxtime
@@ -149,4 +153,14 @@ cdef class CbcContext:
 
         n = ccbc.Cbc_getNumCols(self.model)
         return ArrayDouble(<double*>ccbc.Cbc_getColSolution(self.model),n)
+
+    def getRowActivity(self):
+
+        n = ccbc.Cbc_getNumCols(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getRowActivity(self.model),n)
+
+    def getReducedCost(self):
+
+        m = ccbc.Cbc_getNumRows(self.model)
+        return ArrayDouble(<double*>ccbc.Cbc_getReducedCost(self.model),m)
 
