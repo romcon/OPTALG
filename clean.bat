@@ -8,6 +8,7 @@ rmdir /s /q %~dp0build
 rmdir /s /q %~dp0dist
 rmdir /s /q %~dp0OPTALG.egg-info
 rmdir /s /q %~dp0lib\ipopt
+rmdir /s /q %~dp0lib\cbc
 del /s /f %~dp0lib\clp*
 del /s /f %~dp0lib\cbc*
 del /s /f %~dp0lib\Ipopt*
