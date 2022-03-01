@@ -30,28 +30,6 @@ add_subdirectory(SuiteSparse_config)
 add_subdirectory(KLU)
 
 
-
-
-
-
-# demonstration program for local testing
-#add_executable(KLDemo KLU/Demo/klu_simple.c)
-#target_compile_options(KLDemo PUBLIC "-DREAD_KUNDERT")
-#target_link_libraries(KLDemo PRIVATE
-# KLU
- #AMD
- #BTF
- #COLAMD
- #CSparse
- #CZSparse)
-#if(UNIX)
-#  target_link_libraries(KLDemo PRIVATE m)
-#endif()
-
-
-
-
-
 #install for deployment
 install(TARGETS KLU
         LIBRARY DESTINATION lib
