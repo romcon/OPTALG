@@ -91,6 +91,26 @@ if os.environ.get('OPTALG_CBC') == 'true':
                                         extra_link_args=extra_link_args)],
                                         language_level=3)
 
+# KLU solver
+if os.environ.get('OPTALG_KLU') == 'true':
+    ext_modules += cythonize([Extension(name='optalg.lin_solver._klu.klu',
+                                        sources=['./optalg/lin_solver/_klu/klu.pyx'],
+                                        libraries=['KLU'],
+                                        include_dirs=[np.get_include(),
+                                                      './lib/SuiteSparse/Include',
+                                                      './lib/SuiteSparse/KLU/',
+                                                      './lib/SuiteSparse/AMD/include',
+                                                      './lib/SuiteSparse/BTF/include',
+                                                      './lib/SuiteSparse/COLAMD/include',
+                                                      './lib/SuiteSparse/CSparse/include',
+                                                      './lib/SuiteSparse/SuiteSparse_config',
+                                                      './lib/SuiteSparse/KLU/include',
+                                                      ],
+                                        library_dirs=['./lib/SuiteSparse/build/KLU/Release',
+                                                      ],
+                                        extra_link_args=[''])],
+                             language_level=3)
+
 exec(open(os.path.join('optalg', 'version.py')).read())
 
 
@@ -144,6 +164,7 @@ setup(name='OPTALG',
       packages=['optalg',
                 'optalg.lin_solver',
                 'optalg.lin_solver._mumps',
+                'optalg.lin_solver._klu',
                 'optalg.opt_solver',
                 'optalg.opt_solver._ipopt',
                 'optalg.opt_solver._clp',
@@ -152,10 +173,12 @@ setup(name='OPTALG',
                         'numpy>=1.11.2',
                         'scipy>=0.18.1',
                         'nose'],
-      package_data={'optalg.lin_solver._mumps' : ['libcoinmumps*', 'IpOptFSS*'],
-                    'optalg.opt_solver._ipopt' : ['libipopt*', 'IpOpt-vc10*', 'IpOptFSS*'],
-                    'optalg.opt_solver._clp' : ['libClp*'],
-                    'optalg.opt_solver._cbc' : ['libCbc*']},
+      package_data={'optalg.lin_solver._mumps': ['libcoinmumps*', 'IpOptFSS*'],
+                    'optalg.opt_solver._ipopt': ['libipopt*', 'IpOpt-vc10*', 'IpOptFSS*'],
+                    'optalg.opt_solver._clp': ['libClp*'],
+                    'optalg.opt_solver._klu': ['KLU*', '*.dll'],
+                    'optalg.opt_solver._cbc': ['libCbc*'],
+                    "": ['*.dll']},
       classifiers=['Development Status :: 5 - Production/Stable',
                    'License :: OSI Approved :: BSD License',
                    'Programming Language :: Python :: 2.7',

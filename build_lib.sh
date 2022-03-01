@@ -72,3 +72,11 @@ if [ ! -d "lib/cbc" ] && [ "$OPTALG_CBC" = true ]; then
     cp lib/libCbc* ../../optalg/opt_solver/_cbc
     cd ../../
 fi
+
+if [ ! -d "lib/cbc" ]; then
+	mkdir -p lib
+fi
+
+cd lib
+git clone https://github.com/DrTimothyAldenDavis/SuiteSparse.git SuiteSparse
+cd ..

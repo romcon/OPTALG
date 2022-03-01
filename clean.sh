@@ -11,6 +11,7 @@ rm -rf OPTALG.egg-info
 rm -rf build
 rm -rf dist
 rm -rf lib/ipopt
+rm -rf lib/SuiteSparse
 rm -rf lib/clp
 rm -rf lib/cbc
 rm -f lib/Ipopt*
