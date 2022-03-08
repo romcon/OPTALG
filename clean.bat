@@ -4,6 +4,8 @@ del /s /f %~dp0*.dll
 del /s /f %~dp0*.lib
 del /s /f %~dp0*.a
 del /s /f %~dp0*.c
+del /s /f %~dp0*.pyd
+del /s /f %~dp0*AMD.txt
 rmdir /s /q %~dp0build
 rmdir /s /q %~dp0dist
 rmdir /s /q %~dp0OPTALG.egg-info

@@ -44,6 +44,8 @@ IF "%OPTALG_KLU%" == "true" (
 		CALL build_lib.bat
 		
 		copy KLU\Release\KLU.dll ..\..\..\optalg\lin_solver\_klu
+		copy ..\CCOLAMD\Doc\License.txt ..\..\..\optalg\lin_solver\_klu\License_CCOLAMD.txt
+		copy ..\AMD\Doc\License.txt ..\..\..\optalg\lin_solver\_klu\License_AMD.txt
 		
 		cd ..\..\..
 		
