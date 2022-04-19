@@ -286,7 +286,11 @@ class OptSolverAugL(OptSolver):
 
             # Check penalty
             if self.sigma < sigma_min:
-                raise OptSolverError_SmallPenalty(self)
+                if barrier.VarsAtBounds['indexes']:
+                    vio_list = barrier.VarsAtBounds['indexes']
+                else:
+                    vio_list = None
+                raise OptSolverError_SmallPenalty(self, indexes=vio_list)
 
             # Check custom terminations
             for t in self.terminations:
@@ -306,8 +310,7 @@ class OptSolverAugL(OptSolver):
                 ind2 = np.where((barrier.umin-self.x) > -1e-15)[0] # first of tuple
                 vios = np.concatenate((ind1, ind2), axis=0)
                 vio_list = [int(i) for i in vios if i.size > 0]
-                vio_string = ','.join(map(str, vio_list))
-                raise OptSolverError_NarrowBounded(self, vio_string)
+                raise OptSolverError_NarrowBounded(self, indexes=vio_list)
 
             try:
 
@@ -573,6 +576,9 @@ class AugLBarrier:
         self.Hphi_data = np.zeros(n)
         self.Hphi = coo_matrix((self.Hphi_data,(self.Hphi_row,self.Hphi_col)),shape=(n,n))
 
+        self.VarsAtBounds = {'indexes': [],
+                             'index_max_H': []}
+
     def eval(self,u):
 
         assert(u.size == self.n)
@@ -580,9 +586,19 @@ class AugLBarrier:
         dumax = np.maximum(self.umax-u,1e-12)
         dumin = np.maximum(u-self.umin,1e-12)
 
+        ind1 = np.where(dumax <= 1e-12)[0]
+        ind2 = np.where(dumin <= 1e-12)[0]
+        vio_u = [i for i in ind2]+[i for i in ind1]
+        if len(vio_u) > 0:
+            self.VarsAtBounds['indexes'] = vio_u
+
         self.phi = -np.sum(np.log(dumax)+np.log(dumin))
         self.gphi[:] = -1./dumin+1./dumax
         self.Hphi_data[:] = 1./np.square(dumin)+1./np.square(dumax)
+
+        ind_Hdata = (-self.Hphi_data).argsort()[:5] # index of top 5 Hdata
+        if len(vio_u) > 0:
+            self.VarsAtBounds['index_max_H'] = ind_Hdata
 
     def to_interior(self,x, eps=1e-5):
 

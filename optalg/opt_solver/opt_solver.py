@@ -234,7 +234,14 @@ class OptSolver:
             else:
                 s = (l + u)/2.
 
-        raise OptSolverError_LineSearch(self)
+        try:
+            if self.barrier.VarsAtBounds['indexes']:
+                vio_list = self.barrier.VarsAtBounds['indexes']
+            else:
+                vio_list = None
+            raise OptSolverError_LineSearch(self, indexes=vio_list)
+        except:
+            raise OptSolverError_LineSearch(self)
 
     def reset(self):
         """
