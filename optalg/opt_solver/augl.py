@@ -184,7 +184,7 @@ class OptSolverAugL(OptSolver):
             dres = norminf(fdata.dres)
             gLmax = norminf(fdata.GradF)
 
-            # Penatly update
+            # Penalty update
             if pres <= np.maximum(gamma*pres_prev,feastol):
                 self.sigma *= beta_large
                 self.code[1] = 'p'

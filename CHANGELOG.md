@@ -7,6 +7,7 @@ Version 1.1.10
 * Added Cbc API OptSolverCbc wrapper for getRowActivity and getReducedCost.
 * Added fortran compiler flag `-fallow-argument-mismatch` to compile without argument matching which gcc 10 requires.
 * Added test for OptSolverClp duals.
+* Changed maximum iterations parameter in IPOPT to `maxiter` instead of `max_iter` to match the other solvers.
 
 Version 1.1.9
 -------------
