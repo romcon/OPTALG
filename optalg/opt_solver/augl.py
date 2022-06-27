@@ -282,7 +282,11 @@ class OptSolverAugL(OptSolver):
 
             # Check total maxiters
             if self.k >= maxiter:
-                raise OptSolverError_MaxIters(self)
+                if barrier.VarsAtBounds['indexes']:
+                    vio_list = barrier.VarsAtBounds['indexes']
+                else:
+                    vio_list = barrier.VarsAtBounds['index_max_H']
+                raise OptSolverError_MaxIters(self, indexes=vio_list)
 
             # Check penalty
             if self.sigma < sigma_min:
@@ -597,8 +601,7 @@ class AugLBarrier:
         self.Hphi_data[:] = 1./np.square(dumin)+1./np.square(dumax)
 
         ind_Hdata = (-self.Hphi_data).argsort()[:5] # index of top 5 Hdata
-        if len(vio_u) > 0:
-            self.VarsAtBounds['index_max_H'] = ind_Hdata
+        self.VarsAtBounds['index_max_H'] = ind_Hdata
 
     def to_interior(self,x, eps=1e-5):
 

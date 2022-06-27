@@ -134,8 +134,8 @@ class OptSolverError_NoInterior(OptSolverError):
         OptSolverError.__init__(self, solver, 'empty interior')
 
 class OptSolverError_MaxIters(OptSolverError):
-    def __init__(self, solver=None):
-        OptSolverError.__init__(self, solver, 'maximum number of iterations')
+    def __init__(self, solver=None, indexes=None):
+        OptSolverError.__init__(self, solver, 'maximum number of iterations', indexes=indexes)
 
 class OptSolverError_SmallPenalty(OptSolverError):
     def __init__(self, solver=None, indexes=None):
