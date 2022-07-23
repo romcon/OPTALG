@@ -180,8 +180,8 @@ class TestOptSolvers(unittest.TestCase):
         A = coo_matrix(np.random.randn(m,n))
         b = np.random.randn(m)
         g = np.random.randn(n)
-        B = np.matrix(np.random.randn(p,n))
-        H = coo_matrix(B.T*B+1e-3*np.eye(n))
+        B = np.array(np.random.randn(p,n))
+        H = coo_matrix(B.T@B+1e-3*np.eye(n))
         l = np.random.randn(n)
         u = l+20*np.random.rand(n)
 
@@ -635,8 +635,8 @@ class TestOptSolvers(unittest.TestCase):
             A = coo_matrix(np.random.randn(m,n))
             b = np.random.randn(m)
             g = np.random.randn(n)
-            B = np.matrix(np.random.randn(p,n))
-            H = coo_matrix(B.T*B)
+            B = np.array(np.random.randn(p,n))
+            H = coo_matrix(B.T@B)
             l = np.random.randn(n)
             u = l + 10*np.random.rand()
 
@@ -724,8 +724,8 @@ class TestOptSolvers(unittest.TestCase):
             A = coo_matrix(np.random.randn(m,n))
             b = np.random.randn(m)
             g = np.random.randn(n)
-            B = np.matrix(np.random.randn(p,n))
-            H = coo_matrix(B.T*B+1e-5*np.eye(n))
+            B = np.array(np.random.randn(p,n))
+            H = coo_matrix(B.T@B+1e-5*np.eye(n))
             l = np.random.randn(n)
             u = l+20*np.random.rand(n)
 

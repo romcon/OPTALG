@@ -13,7 +13,6 @@ from subprocess import call
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 import py_compile
-from distutils import log
 from setuptools.command.build_py import build_py
 from setuptools.command.bdist_egg import bdist_egg
 from wheel.bdist_wheel import bdist_wheel
@@ -116,11 +115,11 @@ if len(sys.argv) > 1 and 'compiled' in sys.argv[1]:
             for file in files:
                 full_path = os.path.abspath(file)
                 if file.endswith('.py'):
-                    log.info("{}  compiling and unlinking".format(file))
+                    print("{}  compiling and unlinking".format(file))
                     py_compile.compile(file, cfile=file+'c')
                     os.unlink(file)
                 elif file.endswith('pyx') or file.endswith('pxd'):
-                    log.info("{}  unlinking".format(file))
+                    print("{}  unlinking".format(file))
                     os.unlink(file)
 
     extra_cmd_classes = {'bdist_wheel_compiled': bdist_wheel_compiled,
