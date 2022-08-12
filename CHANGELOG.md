@@ -1,3 +1,7 @@
+Unreleased
+----------
+* Moved targeted support to Python 3.10
+
 Version 1.1.10
 --------------
 * Added isProvenInfeasible and Cbc_isProvenInfeasible for OptSolverCbc.
