@@ -11,6 +11,7 @@ if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
     unzip Ipopt-3.12.8.zip
     mv Ipopt-3.12.8 ipopt
     cd ipopt/ThirdParty/Mumps
+    sed -i '' 's,http://mumps.enseeiht.fr,https://coin-or-tools.github.io/ThirdParty-Mumps,g' ./get.Mumps
     ./get.Mumps
     cd ../../
     ./configure FFLAGS='-fallow-argument-mismatch'  # needed to compile mumps with gcc 10
