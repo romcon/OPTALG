@@ -521,6 +521,13 @@ class TestOptSolvers(unittest.TestCase):
         except ImportError:
             raise unittest.SkipTest('no cbc')
 
+        try:
+            from optalg.opt_solver._cbc import CbcContext
+        except AttributeError:
+            raise unittest.SkipTest('no cbc configured')
+        except ModuleNotFoundError:
+            raise unittest.SkipTest('no cbc configured')
+
         solver.set_parameters({'quiet':True})
 
         solver.solve(problem)
