@@ -38,7 +38,7 @@ elif 'linux' in sys.platform.lower():
 else:
     libraries_mumps = ['IpOptFSS']
     libraries_ipopt = ['IpOpt-vc10']
-    extra_link_args = ['']
+    extra_link_args = None
 
 # Extension modules
 ext_modules = []
