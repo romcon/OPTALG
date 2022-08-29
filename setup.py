@@ -13,7 +13,6 @@ from subprocess import call
 from Cython.Build import cythonize
 from setuptools import setup, Extension
 import py_compile
-from distutils import log
 from setuptools.command.build_py import build_py
 from setuptools.command.bdist_egg import bdist_egg
 from wheel.bdist_wheel import bdist_wheel
@@ -35,11 +34,11 @@ if 'darwin' in sys.platform.lower():
 elif 'linux' in sys.platform.lower():
     libraries_mumps = ['coinmumps']
     libraries_ipopt = ['ipopt']
-    extra_link_args = ['-Wl,-rpath=$ORIGIN', '-Wl,-rpath=$ORIGIN/../../lin_solver/_mumps']
+    extra_link_args = ['-Wl,-rpath=$ORIGIN', '-Wl,-rpath=$ORIGIN/../../lin_solver/_mumps', '-Wl,-rpath=$ORIGIN/../../lin_solver/_klu']
 else:
     libraries_mumps = ['IpOptFSS']
     libraries_ipopt = ['IpOpt-vc10']
-    extra_link_args = ['']
+    extra_link_args = None
 
 # Extension modules
 ext_modules = []
@@ -106,9 +105,8 @@ if os.environ.get('OPTALG_KLU') == 'true':
                                                       './lib/SuiteSparse/SuiteSparse_config',
                                                       './lib/SuiteSparse/KLU/include',
                                                       ],
-                                        library_dirs=['./lib/SuiteSparse/build/KLU/Release',
-                                                      ],
-                                        extra_link_args=[''])],
+                                        library_dirs=['./lib/SuiteSparse'],
+                                        extra_link_args=extra_link_args)],
                              language_level=3)
 
 exec(open(os.path.join('optalg', 'version.py')).read())
@@ -136,11 +134,11 @@ if len(sys.argv) > 1 and 'compiled' in sys.argv[1]:
             for file in files:
                 full_path = os.path.abspath(file)
                 if file.endswith('.py'):
-                    log.info("{}  compiling and unlinking".format(file))
+                    print("{}  compiling and unlinking".format(file))
                     py_compile.compile(file, cfile=file+'c')
                     os.unlink(file)
                 elif file.endswith('pyx') or file.endswith('pxd'):
-                    log.info("{}  unlinking".format(file))
+                    print("{}  unlinking".format(file))
                     os.unlink(file)
 
     extra_cmd_classes = {'bdist_wheel_compiled': bdist_wheel_compiled,
@@ -172,17 +170,17 @@ setup(name='OPTALG',
       install_requires=['cython>=0.20.1',
                         'numpy>=1.11.2',
                         'scipy>=0.18.1',
-                        'nose'],
-      package_data={'optalg.lin_solver._mumps': ['libcoinmumps*', 'IpOptFSS*'],
+                        'pytest'],
+      package_data={'optalg.lin_solver._mumps':  ['libcoinmumps*', 'IpOptFSS*'],
+                    'optalg.lin_solver._klu': ['KLU*', '*.dll', 'libKLU*'],
                     'optalg.opt_solver._ipopt': ['libipopt*', 'IpOpt-vc10*', 'IpOptFSS*'],
                     'optalg.opt_solver._clp': ['libClp*'],
-                    'optalg.opt_solver._klu': ['KLU*', '*.dll'],
                     'optalg.opt_solver._cbc': ['libCbc*'],
-                    "": ['*.dll', '*.txt']},  
+                    "": ['*.dll', '*.txt']},
       classifiers=['Development Status :: 5 - Production/Stable',
                    'License :: OSI Approved :: BSD License',
-                   'Programming Language :: Python :: 2.7',
-                   'Programming Language :: Python :: 3.5',
-                   'Programming Language :: Python :: 3.6',
-                   'Programming Language :: Python :: 3.7'],
+                   'Programming Language :: Python :: 3.7',
+                   'Programming Language :: Python :: 3.8',
+                   'Programming Language :: Python :: 3.9',
+                   'Programming Language :: Python :: 3.10'],
       ext_modules=ext_modules)

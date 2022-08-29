@@ -43,10 +43,12 @@ IF "%OPTALG_KLU%" == "true" (
 		CALL clean.bat
 		CALL build_lib.bat
 		
-		copy KLU\Release\KLU.dll ..\..\..\optalg\lin_solver\_klu
+		copy KLU\Release\KLU.dll .
+
 		copy ..\CCOLAMD\Doc\License.txt ..\..\..\optalg\lin_solver\_klu\License_CCOLAMD.txt
 		copy ..\AMD\Doc\License.txt ..\..\..\optalg\lin_solver\_klu\License_AMD.txt
-		
+		copy ..\lib\KLU.dll ..\..\..\optalg\lin_solver\_klu
+
 		cd ..\..\..
 		
 		python setup.py setopt --command build -o compiler -s msvc

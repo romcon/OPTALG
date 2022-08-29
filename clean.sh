@@ -7,6 +7,8 @@ find . -name libipopt* -delete
 find . -name libcoinmumps* -delete
 find . -name libClp* -delete
 find . -name libCbc* -delete
+find . -name libKLU* -delete
+
 rm -rf OPTALG.egg-info
 rm -rf build
 rm -rf dist

@@ -22,7 +22,7 @@ class OptSolverIpopt(OptSolver):
                   'hessian_approximation': 'exact',
                   'linear_solver': 'mumps',
                   'print_level': 5,
-                  'max_iter': 1000,
+                  'maxiter': 1000,
                   'mu_init': 1e-1,
                   'sb': 'yes',
                   'expect_infeasible_problem': 'no',
@@ -125,7 +125,7 @@ class OptSolverIpopt(OptSolver):
         h_approx = params['hessian_approximation']
         lin_solver = params['linear_solver']
         print_level = params['print_level']
-        max_iter = params['max_iter']
+        max_iter = params['maxiter']
         sb = params['sb']
         exp_infeasible = params['expect_infeasible_problem']
         d_check_naninf = params['check_derivatives_for_naninf']
