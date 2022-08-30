@@ -65,3 +65,20 @@ class TestOptSolvers(unittest.TestCase):
         x = mumps.solve(b)
 
         self.assertLess(norm(np.dot(A,x)-b),1e-10)
+
+    def test_klu(self):
+
+        A = np.random.randn(100, 100)
+        b = np.random.randn(100)
+
+        try:
+            klu = opt.lin_solver.new_linsolver('klu', 'unsymmetric')
+        except ImportError:
+            raise unittest.SkipTest('no klu')
+
+        self.assertTrue(isinstance(klu, opt.lin_solver.LinSolverKLU))
+        klu.analyze(A)
+        klu.factorize(A)
+        x = klu.solve(b)
+
+        self.assertLess(norm(np.dot(A, x) - b), 1e-10)

@@ -73,3 +73,32 @@ if [ ! -d "lib/cbc" ] && [ "$OPTALG_CBC" = true ]; then
     cp lib/libCbc* ../../optalg/opt_solver/_cbc
     cd ../../
 fi
+
+# KLU
+if [ ! -d "lib/SuiteSparse" ] && [ "$OPTALG_KLU" = true ]; then
+    mkdir -p lib
+    cd lib
+		git clone https://github.com/DrTimothyAldenDavis/SuiteSparse.git SuiteSparse
+		cp -p cmakelist_suitesparse_entry/build_lib.sh SuiteSparse
+		cp -p cmakelist_suitesparse_entry/clean.sh SuiteSparse
+		cp cmakelist_suitesparse_entry/CMakeLists.txt SuiteSparse
+		cp cmaklists_suitesparse_amd/CMakeLists.txt SuiteSparse/AMD
+		cp cmaklists_suitesparse_btf/CMakeLists.txt SuiteSparse/BTF
+		cp cmaklists_suitesparse_colamd/CMakeLists.txt SuiteSparse/COLAMD
+		cp cmaklists_suitesparse_config/CMakeLists.txt SuiteSparse/SuiteSparse_config
+		cp cmaklists_suitesparse_csparse/CMakeLists.txt SuiteSparse/CSparse
+		cp cmaklists_suitesparse_klu/CMakeLists.txt SuiteSparse/KLU
+		
+    cd SuiteSparse
+
+    ./clean.sh
+    ./build_lib.sh
+
+    cp ./build/KLU/libKLU.* .
+    cp ./build/KLU/libKLU.* ../../optalg/lin_solver/_klu
+    cp ./CCOLAMD/Doc/License.txt ../../optalg/lin_solver/_klu/License_CCOLAMD.txt
+    cp ./AMD/Doc/License.txt ../../optalg/lin_solver/_klu/License_AMD.txt
+
+    cd ../../
+    
+fi

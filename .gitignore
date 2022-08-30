@@ -29,12 +29,14 @@ dist/
 *.dylib
 lib/
 *.dll
+KLU.lib
 
 # Cython C
 _dmumps.c
 cipopt.c
 cclp.c
 ccbc.c
+klu.c
 
 # Setup
 setup.cfg
@@ -42,3 +44,6 @@ setup.cfg
 # Eclipse stuff
 /.project
 /.pydevproject
+
+# License (KLU)
+*AMD.txt
