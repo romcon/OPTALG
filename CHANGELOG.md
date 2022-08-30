@@ -1,6 +1,9 @@
 Unreleased
 ----------
-* Moved targeted support to Python 3.10
+* Moved targeted support to Python 3.10.
+* Moved to pytest from nosetest.
+* Added tox support.
+* Added KLU linear solver.
 
 Version 1.1.10
 --------------
