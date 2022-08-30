@@ -29,6 +29,7 @@ dist/
 *.dylib
 lib/
 *.dll
+KLU.lib
 
 # Cython C
 _dmumps.c
