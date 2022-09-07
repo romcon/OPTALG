@@ -310,10 +310,9 @@ class OptSolverAugL(OptSolver):
             a2 = np.min(((barrier.umin-self.x)[pneg])/(p[pneg])) if pneg.sum() else np.inf
             alpha_max = 0.98*min([a1,a2])
             if not alpha_max:
-                ind1 = np.where((barrier.umax-self.x) < 1e-15)[0]  # first of tuple
-                ind2 = np.where((barrier.umin-self.x) > -1e-15)[0] # first of tuple
-                vios = np.concatenate((ind1, ind2), axis=0)
-                vio_list = [int(i) for i in vios if i.size > 0]
+                ind1 = np.where((barrier.umax-self.x) == 0)[0]
+                ind2 = np.where((barrier.umin-self.x) == 0)[0]
+                vio_list = [i for i in ind2]+[i for i in ind1]
                 raise OptSolverError_NarrowBounded(self, indexes=vio_list)
 
             try:
@@ -601,7 +600,8 @@ class AugLBarrier:
         self.Hphi_data[:] = 1./np.square(dumin)+1./np.square(dumax)
 
         ind_Hdata = (-self.Hphi_data).argsort()[:5] # index of top 5 Hdata
-        self.VarsAtBounds['index_max_H'] = ind_Hdata
+        if len(vio_u) > 0:
+            self.VarsAtBounds['index_max_H'] = ind_Hdata
 
     def to_interior(self,x, eps=1e-5):
 
