@@ -11,6 +11,7 @@ if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
     unzip Ipopt-3.12.8.zip
     mv Ipopt-3.12.8 ipopt
     cd ipopt/ThirdParty/Mumps
+    sed -i '' 's,http://mumps.enseeiht.fr,https://coin-or-tools.github.io/ThirdParty-Mumps,g' ./get.Mumps
     ./get.Mumps
     cd ../../
     ./configure FFLAGS='-fallow-argument-mismatch'  # needed to compile mumps with gcc 10
@@ -71,4 +72,33 @@ if [ ! -d "lib/cbc" ] && [ "$OPTALG_CBC" = true ]; then
     fi
     cp lib/libCbc* ../../optalg/opt_solver/_cbc
     cd ../../
+fi
+
+# KLU
+if [ ! -d "lib/SuiteSparse" ] && [ "$OPTALG_KLU" = true ]; then
+    mkdir -p lib
+    cd lib
+		git clone https://github.com/DrTimothyAldenDavis/SuiteSparse.git SuiteSparse
+		cp -p cmakelist_suitesparse_entry/build_lib.sh SuiteSparse
+		cp -p cmakelist_suitesparse_entry/clean.sh SuiteSparse
+		cp cmakelist_suitesparse_entry/CMakeLists.txt SuiteSparse
+		cp cmaklists_suitesparse_amd/CMakeLists.txt SuiteSparse/AMD
+		cp cmaklists_suitesparse_btf/CMakeLists.txt SuiteSparse/BTF
+		cp cmaklists_suitesparse_colamd/CMakeLists.txt SuiteSparse/COLAMD
+		cp cmaklists_suitesparse_config/CMakeLists.txt SuiteSparse/SuiteSparse_config
+		cp cmaklists_suitesparse_csparse/CMakeLists.txt SuiteSparse/CSparse
+		cp cmaklists_suitesparse_klu/CMakeLists.txt SuiteSparse/KLU
+		
+    cd SuiteSparse
+
+    ./clean.sh
+    ./build_lib.sh
+
+    cp ./build/KLU/libKLU.* .
+    cp ./build/KLU/libKLU.* ../../optalg/lin_solver/_klu
+    cp ./CCOLAMD/Doc/License.txt ../../optalg/lin_solver/_klu/License_CCOLAMD.txt
+    cp ./AMD/Doc/License.txt ../../optalg/lin_solver/_klu/License_AMD.txt
+
+    cd ../../
+    
 fi
