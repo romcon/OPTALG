@@ -12,12 +12,15 @@ IF "%OPTALG_IPOPT%" == "true" (
         7z x foo.7z
         copy lib\x64\ReleaseMKL\IpOptFSS.dll ..\lib
         copy lib\x64\ReleaseMKL\IpOptFSS.lib ..\lib
+		copy lib\x64\ReleaseMKL\libiomp5md.dll ..\lib
         copy lib\x64\ReleaseMKL\IpOpt-vc10.dll ..\lib
         copy lib\x64\ReleaseMKL\IpOpt-vc10.lib ..\lib
         cd ..
         copy lib\Ipopt-vc10.dll ..\..\optalg\opt_solver\_ipopt
-        copy lib\IpoptFSS.dll ..\..\optalg\opt_solver\_ipopt
-        copy lib\IpoptFSS.dll ..\..\optalg\lin_solver\_mumps
+        copy lib\IpOptFSS.dll ..\..\optalg\opt_solver\_ipopt
+		copy lib\libiomp5md.dll ..\..\optalg\lin_solver\_ipopt
+        copy lib\IpOptFSS.dll ..\..\optalg\lin_solver\_mumps
+		copy lib\libiomp5md.dll ..\..\optalg\lin_solver\_mumps
         cd ..\..\
 
         python setup.py setopt --command build -o compiler -s msvc

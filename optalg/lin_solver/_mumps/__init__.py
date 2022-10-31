@@ -4,7 +4,7 @@
 """
 
 import warnings
-from . import _dmumps
+from ._dmumps import *
 
 #__all__ = [
 #    'DMumpsContext',
