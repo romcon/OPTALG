@@ -19,7 +19,7 @@ This package is meant to be used by other Python packages and not by users direc
 
 ## Documentation
 
-For EPRI developers, see the guides documentation in <https://github.com/romcon/guides/wiki/Low-Level-Stack#optalg>.
+For EPRI developers, see the guides documentation in <https://gitlab.epri.com/gat-devs/guides/-/blob/master/tool-guides/OPTALG.md>.
 
 The version 1.1.7 documentation for this package can be found in <http://optalg.readthedocs.io/>.
 But, it is preferred that you build the documentation using Sphinx (prerequisite) by going to the docs folder. Then run `make html` to build html documentation and `make latexpdf` to build the pdf file via latexpdf.
