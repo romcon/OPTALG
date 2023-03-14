@@ -9,11 +9,12 @@
 
 class OptSolverError(Exception):
 
-    def __init__(self, solver, value):
+    def __init__(self, solver, value, indexes=None):
         if solver:
             solver.set_status(solver.STATUS_ERROR)
             solver.set_error_msg(value)
         self.value = value
+        self.indexes = indexes
 
     def __str__(self):
         return str(self.value)
@@ -97,12 +98,12 @@ class OptSolverError_NumProblems(OptSolverError):
         OptSolverError.__init__(self, solver, 'numerical problems')
 
 class OptSolverError_NarrowBounded(OptSolverError):
-    def __init__(self, solver=None, value=None):
-        OptSolverError.__init__(self, solver, 'narrow bounded '+value)
+    def __init__(self, solver=None, indexes=None):
+        OptSolverError.__init__(self, solver, 'narrow bounded', indexes=indexes)
 
 class OptSolverError_LineSearch(OptSolverError):
-    def __init__(self, solver=None):
-        OptSolverError.__init__(self, solver, 'line search failed')
+    def __init__(self, solver=None, indexes=None):
+        OptSolverError.__init__(self, solver, 'line search failed', indexes=indexes)
 
 class OptSolverError_BadProblemType(OptSolverError):
     def __init__(self, solver=None):
@@ -133,12 +134,12 @@ class OptSolverError_NoInterior(OptSolverError):
         OptSolverError.__init__(self, solver, 'empty interior')
 
 class OptSolverError_MaxIters(OptSolverError):
-    def __init__(self, solver=None):
-        OptSolverError.__init__(self, solver, 'maximum number of iterations')
+    def __init__(self, solver=None, indexes=None):
+        OptSolverError.__init__(self, solver, 'maximum number of iterations', indexes=indexes)
 
 class OptSolverError_SmallPenalty(OptSolverError):
-    def __init__(self, solver=None):
-        OptSolverError.__init__(self, solver, 'penalty parameter too small')
+    def __init__(self, solver=None, indexes=None):
+        OptSolverError.__init__(self, solver, 'penalty parameter too small', indexes=indexes)
 
 class OptSolverError_BadInitPoint(OptSolverError):
     def __init__(self, solver=None):
