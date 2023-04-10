@@ -147,6 +147,14 @@ class OptSolverNR(OptSolver):
             if fmax < feastol:
                 self.set_status(self.STATUS_SOLVED)
                 self.set_error_msg('')
+                self.num_reg = 0
+                for c in self.callbacks:
+                    c(self)
+
+                if self.num_reg > 0:
+                    self.set_status(self.STATUS_UNKNOWN)
+                    continue
+
                 return
 
             # Check maxiters
