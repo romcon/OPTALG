@@ -5,7 +5,6 @@ add_library(AMD
  Source/amd_control.c
  Source/amd_defaults.c
  Source/amd_dump.c
- Source/amd_global.c
  Source/amd_info.c
  Source/amd_order.c
  Source/amd_post_tree.c
