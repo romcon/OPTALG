@@ -120,6 +120,7 @@ class OptSolverNR(OptSolver):
         pmax = 0.
         self.k = 0
         analyzed = False
+        self.swsh_call = 0
         while True:
 
             # Callbacks
@@ -147,6 +148,15 @@ class OptSolverNR(OptSolver):
             if fmax < feastol:
                 self.set_status(self.STATUS_SOLVED)
                 self.set_error_msg('')
+                self.num_reg = 0
+                self.swsh_call += 1
+                for c in self.callbacks:
+                    c(self)
+
+                if self.num_reg > 0:
+                    self.set_status(self.STATUS_UNKNOWN)
+                    continue
+
                 return
 
             # Check maxiters

@@ -6,15 +6,15 @@ if [ ! -d "lib/ipopt" ] && [ "$OPTALG_IPOPT" = true ]; then
     mkdir -p lib
     cd lib
     if [ ! -f Ipopt-3.12.8.zip ]; then
-      wget https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.8.zip
+      wget https://www.coin-or.org/download/source/Ipopt/Ipopt-3.12.13.zip
     fi
-    unzip Ipopt-3.12.8.zip
-    mv Ipopt-3.12.8 ipopt
+    unzip Ipopt-3.12.13.zip
+    mv Ipopt-3.12.13 ipopt
     cd ipopt/ThirdParty/Mumps
     sed -i '' 's,http://mumps.enseeiht.fr,https://coin-or-tools.github.io/ThirdParty-Mumps,g' ./get.Mumps
     ./get.Mumps
     cd ../../
-    ./configure FFLAGS='-fallow-argument-mismatch'  # needed to compile mumps with gcc 10
+    ./configure FFLAGS='-fallow-argument-mismatch' # needed to compile mumps with gcc 10
     make clean
     make uninstall
     make
