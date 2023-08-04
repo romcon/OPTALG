@@ -4,6 +4,8 @@ Unreleased
 * Moved to pytest from nosetest.
 * Added tox support.
 * Added KLU linear solver.
+* Added switched shunt call checks to the Newton-Raphson algorithm.
+* Upgraded the Linux/Mac OS scripts to Ipopt 3.12.13 (from 3.12.8).
 
 Version 1.1.10
 --------------
