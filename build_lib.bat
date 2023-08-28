@@ -18,6 +18,7 @@ IF "%OPTALG_IPOPT%" == "true" (
         cd ..
         copy lib\Ipopt-vc10.dll ..\..\optalg\opt_solver\_ipopt
         copy lib\IpOptFSS.dll ..\..\optalg\opt_solver\_ipopt
+	copy lib\libiomp5md.dll ..\..\optalg\opt_solver\_ipopt
         copy lib\IpOptFSS.dll ..\..\optalg\lin_solver\_mumps
 	copy lib\libiomp5md.dll ..\..\optalg\lin_solver\_mumps
         cd ..\..\
