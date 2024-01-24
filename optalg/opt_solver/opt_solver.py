@@ -187,7 +187,7 @@ class OptSolver:
 
         Returns
         -------
-        s : stephlength that satisfies the Wolfe conditions (float).
+        s : steplength that satisfies the Wolfe conditions (float).
         """
 
         # Parameters of line search
@@ -210,7 +210,7 @@ class OptSolver:
             raise OptSolverError_BadSearchDir(self)
 
         # Bisection
-        for i in range(0,maxiter):
+        for i in range(0, maxiter):
 
             xsp = x+s*p
 

@@ -1,6 +1,8 @@
 # OPTALG
 
-[![Build Status](https://travis-ci.org/romcon/OPTALG.svg?branch=master)](https://travis-ci.org/romcon/OPTALG)
+Known working version Python 3.8, 3.9, 3.10.
+
+Python 3.7 is no longer supported, but may still work if numpy is downgraded (previously known working version was 1.16, but that may no longer be compatible with other libraries).
 
 ## Overview
 
@@ -19,10 +21,9 @@ This package is meant to be used by other Python packages and not by users direc
 
 ## Documentation
 
-For EPRI developers, see the guides documentation in <https://gitlab.epri.com/gat-devs/guides/-/blob/master/tool-guides/OPTALG.md>.
+For EPRI developers, see the guides documentation in <https://azuredevops.epri.com/EPRI/GAT Suite/_git/guides?path=/tool-guides/OPTALG.md>.
 
-The version 1.1.7 documentation for this package can be found in <http://optalg.readthedocs.io/>.
-But, it is preferred that you build the documentation using Sphinx (prerequisite) by going to the docs folder. Then run `make html` to build html documentation and `make latexpdf` to build the pdf file via latexpdf.
+To build the documentation using Sphinx (prerequisite) go to the docs folder. Then run `make html` to build html documentation and `make latexpdf` to build the pdf file via latexpdf.
 
 ## License
 

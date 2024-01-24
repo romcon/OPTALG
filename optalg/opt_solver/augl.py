@@ -205,7 +205,7 @@ class OptSolverAugL(OptSolver):
             # Update iters
             self.k += 1
 
-    def solve_subproblem(self,delta):
+    def solve_subproblem(self, delta):
 
         # Local vars
         norm2 = self.norm2

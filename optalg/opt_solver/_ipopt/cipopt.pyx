@@ -129,7 +129,7 @@ cdef class IpoptContext:
                                                  <double*>(ngu.data), 
                                                  self.nnzj,
                                                  self.nnzh, 
-                                                 0, 
+                                                 0,
                                                  eval_f_cb,
                                                  eval_g_cb,
                                                  eval_grad_f_cb,
@@ -166,25 +166,25 @@ cdef class IpoptContext:
                 'pi': npi,
                 'mu': nmu}
 
-cdef bint eval_f_cb(int n, double* x, bint new_x, double* obj_value, UserDataPtr user_data):
+cdef bint eval_f_cb(int n, double* x, bint new_x, double* obj_value, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     obj_value[0] = c.eval_f(ArrayDouble(x,c.n))
     return True
 
-cdef bint eval_grad_f_cb(int n, double* x, bint new_x, double* grad_f, UserDataPtr user_data):
+cdef bint eval_grad_f_cb(int n, double* x, bint new_x, double* grad_f, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     cdef np.ndarray[double,mode='c'] grad_f_arr = c.eval_grad_f(ArrayDouble(x,c.n))
     memcpy(grad_f,<double*>(grad_f_arr.data),sizeof(double)*c.n)
     return True
 
-cdef bint eval_g_cb(int n, double* x, bint new_x, int m, double* g, UserDataPtr user_data):
+cdef bint eval_g_cb(int n, double* x, bint new_x, int m, double* g, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     cdef np.ndarray[double,mode='c'] g_arr = c.eval_g(ArrayDouble(x,c.n))
     memcpy(g,<double*>(g_arr.data),sizeof(double)*c.m)
     return True
 
 cdef bint eval_jac_g_cb(int n, double* x, bint new_x, int m, int nele_jac, 
-                        int* iRow, int* jCol, double* values, UserDataPtr user_data):
+                        int* iRow, int* jCol, double* values, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     cdef np.ndarray[int,mode='c'] Jrow_arr
     cdef np.ndarray[int,mode='c'] Jcol_arr
@@ -203,7 +203,7 @@ cdef bint eval_jac_g_cb(int n, double* x, bint new_x, int m, int nele_jac,
     return True
 
 cdef bint eval_h_cb(int n, double* x, bint new_x, double obj_factor, int m, double* lam, bint new_lam,
-                    int nele_hess, int* iRow, int* jCol, double* values, UserDataPtr user_data):
+                    int nele_hess, int* iRow, int* jCol, double* values, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     cdef np.ndarray[int,mode='c'] Hrow_arr
     cdef np.ndarray[int,mode='c'] Hcol_arr
@@ -223,7 +223,7 @@ cdef bint eval_h_cb(int n, double* x, bint new_x, double obj_factor, int m, doub
 
 cdef bint intermediate_cb(int alg_mod, int iter_count, double obj_value, double inf_pr, double inf_du,
                           double mu, double d_norm, double regularization_size, double alpha_du, double alpha_pr,
-                          int ls_trials, UserDataPtr user_data):
+                          int ls_trials, UserDataPtr user_data) noexcept:
     cdef IpoptContext c = <IpoptContext>user_data
     c.iters = iter_count
     return True

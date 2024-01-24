@@ -83,7 +83,7 @@ class OptSolverNR(OptSolver):
         acc_factor = params['acc_factor']
 
         # Linear solver
-        self.linsolver = new_linsolver(params['linsolver'],'unsymmetric')
+        self.linsolver = new_linsolver(params['linsolver'], 'unsymmetric')
 
         # Problem
         problem = cast_problem(problem)

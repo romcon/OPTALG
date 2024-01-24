@@ -1,5 +1,5 @@
-Unreleased
-----------
+Version 1.2.0
+-------------
 * Moved targeted support to Python 3.10.
 * Moved to pytest from nosetest.
 * Added tox support.
