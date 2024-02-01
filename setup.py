@@ -62,10 +62,10 @@ if os.environ.get("OPTALG_IPOPT") == "true":
                 ],
                 library_dirs=["./lib/ipopt/lib"],
                 extra_link_args=extra_link_args,
+                define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
         ],
         language_level=3,
-        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
     )
 
     # IPOPT
