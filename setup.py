@@ -57,15 +57,18 @@ if os.environ.get("OPTALG_IPOPT") == "true":
                 sources=["./optalg/lin_solver/_mumps/_dmumps.pyx"],
                 libraries=libraries_mumps,
                 include_dirs=[
-                    "./lib/ipopt/include/coin/ThirdParty",
-                    "./lib/ipopt/include/coin-or",
+                    "./lib/build/include/coin-or/mumps",
+                    "./lib/build/include/coin-or",
                 ],
-                library_dirs=["./lib/ipopt/lib"],
+                library_dirs=[
+                    "./lib/build/lib",
+                    # "./lib/ipopt/build/lib"
+                ],
                 extra_link_args=extra_link_args,
+                define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
         ],
         language_level=3,
-        define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
     )
 
     # IPOPT
@@ -75,8 +78,14 @@ if os.environ.get("OPTALG_IPOPT") == "true":
                 name="optalg.opt_solver._ipopt.cipopt",
                 sources=["./optalg/opt_solver/_ipopt/cipopt.pyx"],
                 libraries=libraries_ipopt,
-                include_dirs=[np.get_include(), "./lib/ipopt/", "./lib/ipopt/include"],
-                library_dirs=["./lib/ipopt/lib"],
+                include_dirs=[
+                    np.get_include(),
+                    "./lib/build/include/coin-or/mumps",
+                    "./lib/build/include",
+                ],
+                library_dirs=[
+                    "./lib/build/lib",
+                ],
                 extra_link_args=extra_link_args,
                 define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
