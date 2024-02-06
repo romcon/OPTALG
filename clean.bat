@@ -1,4 +1,4 @@
-echo "cleaning OPTALG ..."
+echo "Cleaning all autoogenerated content (3rd party libraries and optalg)"
 del /s /f %~dp0*.pyc
 del /s /f %~dp0*.dll
 del /s /f %~dp0*.lib
@@ -9,7 +9,9 @@ del /s /f %~dp0*AMD.txt
 rmdir /s /q %~dp0build
 rmdir /s /q %~dp0dist
 rmdir /s /q %~dp0OPTALG.egg-info
+:: rmdir /s /q %~dp0lib\ThirdParty-Mumps
 rmdir /s /q %~dp0lib\ipopt
+rmdir /s /q %~dp0lib\build 
 rmdir /s /q %~dp0lib\SuiteSparse
 del /s /f %~dp0lib\clp*
 del /s /f %~dp0lib\cbc*
