@@ -1,28 +1,19 @@
 IF "%OPTALG_IPOPT%" == "true" (
-    IF NOT EXIST "lib\ipopt" (
+    IF NOT EXIST "lib\build" (
 	mkdir lib
         cd lib
 
-		bitsadmin /transfer "JobName" /priority FOREGROUND https://github.com/coin-or/Ipopt/releases/download/releases%2F3.14.14/Ipopt-3.14.14-win64-msvs2019-md.zip "%cd%\lib\ipopt.zip"
+		bitsadmin /transfer "JobName" /priority FOREGROUND https://github.com/coin-or/Ipopt/releases/download/releases/3.14.14/Ipopt-3.14.14-win64-msvs2019-md.zip "%cd%\lib\ipopt.zip"
 		7z x ipopt.zip
-        for /d %%G in ("Ipopt*") do move "%%~G" build
-        cd build
-      	:: mkdir temp
-        :: cd temp
-        :: bitsadmin /transfer "JobName" /priority FOREGROUND https://www.coin-or.org/download/binary/Ipopt/Ipopt-3.11.0-Win32-Win64-dll.7z "%cd%\lib\ipopt\temp\foo.7z"
-        :: 7z x foo.7z
-        :: copy lib\x64\ReleaseMKL\IpOptFSS.dll ..\lib
-        :: copy lib\x64\ReleaseMKL\IpOptFSS.lib ..\lib
-		:: copy lib\x64\ReleaseMKL\libiomp5md.dll ..\lib
-        :: copy lib\x64\ReleaseMKL\IpOpt-vc10.dll ..\lib
-        :: copy lib\x64\ReleaseMKL\IpOpt-vc10.lib ..\lib
-        :: cd ..
-        :: copy lib\Ipopt-vc10.dll ..\..\optalg\opt_solver\_ipopt
-        :: copy lib\IpOptFSS.dll ..\..\optalg\opt_solver\_ipopt
-		:: copy lib\libiomp5md.dll ..\..\optalg\opt_solver\_ipopt
-        :: copy lib\IpOptFSS.dll ..\..\optalg\lin_solver\_mumps
-		:: copy lib\libiomp5md.dll ..\..\optalg\lin_solver\_mumps
-        cd ..\..\
+
+		for /d %%G in ("Ipopt*") do ren "%%~G" build
+        cd build\bin
+
+		@REM Copy DLLs to solver folders
+		copy *.dll ..\..\..\optalg\opt_solver\_ipopt
+		copy *.dll ..\..\..\optalg\lin_solver\_mumps
+
+        cd ..\..\..\
 
         python setup.py setopt --command build -o compiler -s msvc
     )

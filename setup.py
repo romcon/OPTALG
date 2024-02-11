@@ -40,8 +40,8 @@ elif "linux" in sys.platform.lower():
         "-Wl,-rpath=$ORIGIN/../../lin_solver/_klu",
     ]
 else:
-    libraries_mumps = ["IpOptFSS"]
-    libraries_ipopt = ["IpOpt-vc10"]
+    libraries_mumps = ["coinmumps.dll"] #["IpOptFSS"]
+    libraries_ipopt = ["ipopt.dll"] #["IpOpt-vc10"]
     extra_link_args = None
 
 # Extension modules
@@ -62,6 +62,7 @@ if os.environ.get("OPTALG_IPOPT") == "true":
                 ],
                 library_dirs=[
                     "./lib/build/lib",
+                    "./lib/build/bin",
                     # "./lib/ipopt/build/lib"
                 ],
                 extra_link_args=extra_link_args,
@@ -85,6 +86,7 @@ if os.environ.get("OPTALG_IPOPT") == "true":
                 ],
                 library_dirs=[
                     "./lib/build/lib",
+                    "./lib/build/bin",
                 ],
                 extra_link_args=extra_link_args,
                 define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
@@ -224,9 +226,9 @@ setup(
     ],
     install_requires=["cython>=3.0", "numpy>=1.20", "scipy>=1.0", "pytest"],
     package_data={
-        "optalg.lin_solver._mumps": ["libcoinmumps*", "IpOptFSS*"],
+        "optalg.lin_solver._mumps": ["libcoinmumps*", "*.dll"], # Add dll names for windows
         "optalg.lin_solver._klu": ["KLU*", "*.dll", "libKLU*"],
-        "optalg.opt_solver._ipopt": ["libipopt*", "IpOpt-vc10*", "IpOptFSS*"],
+        "optalg.opt_solver._ipopt": ["libipopt*", "*.dll"], # Add dll names for windows
         "optalg.opt_solver._clp": ["libClp*"],
         "optalg.opt_solver._cbc": ["libCbc*"],
         "": ["*.dll", "*.txt"],
