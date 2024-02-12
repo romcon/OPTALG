@@ -5,7 +5,7 @@ Version 1.2.0
 * Added tox support.
 * Added KLU linear solver.
 * Added switched shunt call checks to the Newton-Raphson algorithm.
-* Upgraded the Linux/Mac OS scripts to Ipopt 3.14.14 from 3.12.12 and MUMPS from 4.10 to 5.6.2.
+* Upgraded the Linux/Mac OS and Windows scripts to Ipopt 3.14.14 from 3.12.12 and MUMPS from 4.10 to 5.6.2.
 * Updated README significantly
 
 Version 1.1.10
