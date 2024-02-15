@@ -1,3 +1,13 @@
+Version 1.2.0
+-------------
+* Moved targeted support to Python 3.10.
+* Moved to pytest from nosetest.
+* Added tox support.
+* Added KLU linear solver.
+* Added switched shunt call checks to the Newton-Raphson algorithm.
+* Upgraded the Linux/Mac OS and Windows scripts to Ipopt 3.14.14 from 3.12.12 and MUMPS from 4.10 to 5.6.2.
+* Updated README significantly
+
 Version 1.1.10
 --------------
 * Added isProvenInfeasible and Cbc_isProvenInfeasible for OptSolverCbc.
@@ -7,6 +17,7 @@ Version 1.1.10
 * Added Cbc API OptSolverCbc wrapper for getRowActivity and getReducedCost.
 * Added fortran compiler flag `-fallow-argument-mismatch` to compile without argument matching which gcc 10 requires.
 * Added test for OptSolverClp duals.
+* Changed maximum iterations parameter in IPOPT to `maxiter` instead of `max_iter` to match the other solvers.
 
 Version 1.1.9
 -------------

@@ -7,6 +7,7 @@
 #****************************************************#
 
 from __future__ import print_function
+import sys
 import numpy as np
 from .opt_solver_error import *
 from .problem import cast_problem, OptProblem
@@ -22,12 +23,12 @@ class OptSolverIpopt(OptSolver):
                   'hessian_approximation': 'exact',
                   'linear_solver': 'mumps',
                   'print_level': 5,
-                  'max_iter': 1000,
+                  'maxiter': 1000,
                   'mu_init': 1e-1,
                   'sb': 'yes',
                   'expect_infeasible_problem': 'no',
                   'check_derivatives_for_naninf': 'no',
-                  'diverging_iterates_tol': 1e20,
+                  'diverging_iterates_tol': 1e8,
                   'max_cpu_time': 1e6,
                   'quiet': False}
 
@@ -125,7 +126,7 @@ class OptSolverIpopt(OptSolver):
         h_approx = params['hessian_approximation']
         lin_solver = params['linear_solver']
         print_level = params['print_level']
-        max_iter = params['max_iter']
+        max_iter = params['maxiter']
         sb = params['sb']
         exp_infeasible = params['expect_infeasible_problem']
         d_check_naninf = params['check_derivatives_for_naninf']
@@ -149,7 +150,7 @@ class OptSolverIpopt(OptSolver):
         self.ipopt_context.add_option('max_iter', max_iter)
         self.ipopt_context.add_option('expect_infeasible_problem', exp_infeasible)
         self.ipopt_context.add_option('check_derivatives_for_naninf', d_check_naninf)
-        self.ipopt_context.add_option('diverging_iterates_tol', div_iters_tol)
+        self.ipopt_context.add_option('diverging_iterates_tol', float(div_iters_tol))
         self.ipopt_context.add_option('max_cpu_time', float(max_cpu_time))
         self.ipopt_context.add_option('hessian_approximation', h_approx)
         self.ipopt_context.add_option('linear_solver', lin_solver)

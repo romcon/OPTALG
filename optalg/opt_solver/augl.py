@@ -113,7 +113,7 @@ class OptSolverAugL(OptSolver):
         else:
             self.lam = np.zeros(problem.b.size)
         if problem.nu is not None:
-                self.nu = problem.nu.copy()
+            self.nu = problem.nu.copy()
         else:
             self.nu = np.zeros(problem.f.size)
         try:
@@ -162,8 +162,8 @@ class OptSolverAugL(OptSolver):
         gLmax_prev = norminf(fdata.GradF)
 
         # Init dual update
+        self.update_multiplier_estimates()
         if pres_prev <= feastol:
-            self.update_multiplier_estimates()
             fdata = self.func(self.x)
 
         # Outer iterations
@@ -184,7 +184,7 @@ class OptSolverAugL(OptSolver):
             dres = norminf(fdata.dres)
             gLmax = norminf(fdata.GradF)
 
-            # Penaly update
+            # Penalty update
             if pres <= np.maximum(gamma*pres_prev,feastol):
                 self.sigma *= beta_large
                 self.code[1] = 'p'
@@ -205,7 +205,7 @@ class OptSolverAugL(OptSolver):
             # Update iters
             self.k += 1
 
-    def solve_subproblem(self,delta):
+    def solve_subproblem(self, delta):
 
         # Local vars
         norm2 = self.norm2
@@ -302,9 +302,10 @@ class OptSolverAugL(OptSolver):
             a2 = np.min(((barrier.umin-self.x)[pneg])/(p[pneg])) if pneg.sum() else np.inf
             alpha_max = 0.98*min([a1,a2])
             if not alpha_max:
-                ind1 = np.where((barrier.umax-self.x) == 0)[0]
-                ind2 = np.where((barrier.umin-self.x) == 0)[0]
-                vio_list = [i for i in ind2]+[i for i in ind1]
+                ind1 = np.where((barrier.umax-self.x) < 1e-15)[0]  # first of tuple
+                ind2 = np.where((barrier.umin-self.x) > -1e-15)[0] # first of tuple
+                vios = np.concatenate((ind1, ind2), axis=0)
+                vio_list = [int(i) for i in vios if i.size > 0]
                 vio_string = ','.join(map(str, vio_list))
                 raise OptSolverError_NarrowBounded(self, vio_string)
 
